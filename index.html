@@ -2,21 +2,113 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css">
   <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="node_modules/normalize.css/normalize.css">
   <title>Title</title>
 </head>
 <body>
 <header>
-  <div>
-    <img class="logo" src="assets/taskboard%20logo.svg" alt="task board logo">
-  </div>
-  <nav>
-    <ul class="navigation">
-      <li class="selected"><a href="#">Board</a></li>
-      <li><a href="#">Members</a></li>
-    </ul>
+
+  <nav class="navbar navbar-default navbar-static-top">
+    <div class="container">
+      <div class="navbar-header">
+        <a class="navbar-brand">
+          <img class="logo"  alt="Brand" src="assets/taskboard%20logo.svg">
+        </a>
+      </div>
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#">Board</a></li>
+        <li><a href="#">Members</a></li>
+      </ul>
+    </div>
   </nav>
 </header>
+<main>
+<div class="board-flex">
+  <section class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Panel title</h3>
+    </div>
+    <div class="over-flow-mask">
+      <ul class="flex-box">
+        <li class="assignment"></li>
+        <li class="assignment"></li>
+      </ul>
+    </div>
+    <div class="panel-footer"><button type="button">add...</button></div>
+  </section>
+
+  <section class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Panel title</h3>
+    </div>
+    <div class="over-flow-mask">
+      <ul class="flex-box">
+        <li class="assignment"></li>
+      </ul>
+    </div>
+    <div class="panel-footer"><button type="button">add...</button></div>
+  </section>
+
+  <section class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Panel title</h3>
+    </div>
+    <div class="over-flow-mask">
+      <ul class="flex-box">
+        <li class="assignment"></li>
+        <li class="assignment"></li>
+        <li class="assignment"></li>
+      </ul>
+    </div>
+    <div class="panel-footer"><button type="button">add...</button></div>
+  </section>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Panel title</h3>
+    </div>
+    <div class="over-flow-mask">
+      <div class="flex-box">
+        <div class="assignment"></div>
+        <div class="assignment"></div>
+        <div class="assignment"></div>
+      </div>
+    </div>
+    <div class="panel-footer"><button type="button">add...</button></div>
+  </div>
+  <button type="button" class="btn btn-primary margin-right">add..</button>
+</div>
+
+
+</main>
+<footer>
+
+</footer>
 </body>
 </html>
+
+<!-- <nav class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container">
+    ...
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">
+        <img alt="Brand" src="...">
+      </a>
+    </div>
+  </div>
+</nav>
+
+      <div class="container-fluid">
+      <div class="navbar-header">
+        <a href="#" class="navbar-brand" href="#"><img class="logo" src="assets/taskboard%20logo.svg" alt="task board logo"></a>
+      </div>
+      </div>
+
+          <div class="navbar-header">
+      <a class="navbar-brand" href="#">
+        <img alt="Brand" src="...">
+      </a>
+    </div>
+ -->
