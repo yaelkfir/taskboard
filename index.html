@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css">
   <link rel="stylesheet" href="css/main.css">
-  <link href="https://fonts.googleapis.com/css?family=Karla:700|Montserrat:100,300,500|Roboto:100" rel="stylesheet">
   <title>Title</title>
 </head>
 <body>
@@ -14,7 +13,7 @@
     <div class="container">
       <div class="navbar-header">
         <a class="navbar-brand">
-          <img class="logo"  alt="Brand" src="assets/taskboard%20logo.svg">
+          <img class="logo" alt="Brand" src="assets/tasky-logo-01.svg">
         </a>
       </div>
       <ul class="nav navbar-nav">
@@ -25,118 +24,144 @@
   </nav>
 </header>
 <main>
-<div class="board-flex">
-  <div class="list-container board-flex height-100" >
-    <section class="panel panel-default">
-      <div class="be-task-header panel-heading">
-        <h3 class="panel-title">Panel title</h3>
-        <input class="list-name-input" type="text" value ="list name">
-        <div class="no-floats btn-group">
+  <div class="board-flex">
+    <div class="list-container board-flex height-100">
+      <section class="panel panel-default">
+        <div class="be-task-header panel-heading">
+          <h3 class="panel-title">Panel title</h3>
+          <input class="list-name-input" type="text" value="list name" maxlength="26">
+          <div class="no-floats btn-group">
+            <button type="button" class="delete-btn btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="caret"></span>
+            </button>
+            <ul class="ul-drop-down dropdown-menu">
+              <li><a href="#"><span class="padding-right glyphicon glyphicon-trash
+                "></span>Delete</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class=" over-flow-mask">
+          <ul class="flex-box">
+            <li>
+            <li class="assignment">
+              <div class="card-header">
+              </div>
+              <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam laoreet dolore magna aliquam erat
+                volutpat. Ut wisi
+              </p>
+              <div class="assignment-footer">
+                <span class="user-icon">yk</span>
+                <span class="user-icon">jd</span>
+              </div>
 
-
-          <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-             <span class="caret"></span>
-          </button>
-          <ul class="ul-drop-down dropdown-menu">
-            <li><a href="#">Action</a></li>
+            </li>
+            <li class="assignment"></li>
+            </li>
           </ul>
         </div>
-      </div>
-      <div class=" over-flow-mask">
-        <ul class="flex-box">
-          <li>
-          <li class="assignment"></li>
-          <li class="assignment"></li>
-          </li>
-        </ul>
-      </div>
-      <div class="panel-footer"><button type="button">add a card...</button></div>
-    </section>
+        <div class="panel-footer">
 
-    <section class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">Panel title</h3>
-        <input class="list-name-input" type="text" value="list name">
-        <div class="no-floats btn-group">
-          <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="caret"></span>
+          <button class="panel-footer-btn" type="button">
+            <span class="padding-right glyphicon glyphicon-plus"></span>
+            add a card...
           </button>
-          <ul class="ul-drop-down dropdown-menu">
-            <li><a href="#">Action</a></li>
+        </div>
+      </section>
+
+      <section class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Panel title</h3>
+          <input class="list-name-input" type="text" value="list name" maxlength="26">
+          <div class="no-floats btn-group">
+            <button type="button" class="delete-btn btn btn-default dropdown-toggle" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+              <span class="caret"></span>
+            </button>
+            <ul class="ul-drop-down dropdown-menu">
+              <li><a href="#" class="glyphicon glyphicon-trash
+">Delete</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="over-flow-mask">
+          <ul class="flex-box">
+            <li class="assignment"></li>
           </ul>
         </div>
-      </div>
-      <div class="over-flow-mask">
-        <ul class="flex-box">
-          <li class="assignment"></li>
-        </ul>
-      </div>
-      <div class="panel-footer"><button type="button">add a card...</button></div>
-    </section>
+        <div class="panel-footer">
+          <button class="panel-footer-btn" type="button">add a card...</button>
+        </div>
+      </section>
 
-    <section class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">Panel title</h3>
-        <input class="list-name-input" type="text" value="list name">
-        <div class="no-floats btn-group">
-          <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="caret"></span>
-          </button>
-          <ul class="ul-drop-down dropdown-menu">
-            <li><a href="#">Action</a></li>
+      <section class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Panel title</h3>
+          <input class="list-name-input" type="text" value="list name" maxlength="26">
+          <div class="no-floats btn-group">
+            <button type="button" class="delete-btn btn btn-default dropdown-toggle" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+              <span class="caret"></span>
+            </button>
+            <ul class="ul-drop-down dropdown-menu">
+              <li><a href="#" class="glyphicon glyphicon-trash
+">Delete</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="over-flow-mask">
+          <ul class="flex-box">
+            <li class="assignment"></li>
+            <li class="assignment"></li>
+            <li class="assignment"></li>
           </ul>
         </div>
-      </div>
-      <div class="over-flow-mask">
-        <ul class="flex-box">
-          <li class="assignment"></li>
-          <li class="assignment"></li>
-          <li class="assignment"></li>
-        </ul>
-      </div>
-      <div class="panel-footer">
-        <button type="button">add a card...</button>
-      </div>
-    </section>
+        <div class="panel-footer">
+          <button class="panel-footer-btn" type="button">add a card...</button>
+        </div>
+      </section>
 
-    <section class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">Panel title</h3>
-        <input class="list-name-input" type="text" value = "list name">
-        <div class="no-floats btn-group">
-          <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="caret"></span>
-          </button>
-          <ul class="ul-drop-down dropdown-menu">
-            <li><a href="#">Action</a></li>
+      <section class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Panel title</h3>
+          <input class="list-name-input" type="text" value="list name" maxlength="26">
+          <div class="no-floats btn-group">
+            <button type="button" class="delete-btn btn btn-default dropdown-toggle" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+              <span class="caret"></span>
+            </button>
+            <ul class="ul-drop-down dropdown-menu">
+              <li><a href="#" class="glyphicon glyphicon-trash
+">Delete</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="over-flow-mask">
+          <ul class="flex-box">
+            <div class="assignment"></div>
+            <div class="assignment"></div>
+            <div class="assignment"></div>
+            <div class="assignment"></div>
+            <div class="assignment"></div>
+            <div class="assignment"></div>
+            <div class="assignment"></div>
+            <div class="assignment"></div>
+            <div class="assignment"></div>
           </ul>
         </div>
-      </div>
-      <div class="over-flow-mask">
-        <ul class="flex-box">
-          <div class="assignment"></div>
-          <div class="assignment"></div>
-          <div class="assignment"></div>
-          <div class="assignment"></div>
-          <div class="assignment"></div>
-          <div class="assignment"></div>
-          <div class="assignment"></div>
-          <div class="assignment"></div>
-          <div class="assignment"></div>
-        </ul>
-      </div>
-      <div class="panel-footer"><button type="button">add a card...</button></div>
-    </section>
+        <div class="panel-footer">
+          <button type="button" class="panel-footer-btn">add a card...</button>
+        </div>
+      </section>
+    </div>
+    <button type="button" class="btn btn-primary margin-right" onclick="addList()">add a list..</button>
   </div>
-  <button type="button" class="btn btn-primary margin-right" onclick="addList()">add a list..</button>
-</div>
 
 
 </main>
 <footer>
 
 </footer>
-<script src = "js/main.js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>
 

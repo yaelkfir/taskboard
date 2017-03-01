@@ -3,77 +3,68 @@
  */
 
 
-const addCardBtns = document.querySelectorAll('.panel-footer > button');
 const ENTER = 13;
-const listNames = document.querySelectorAll('.panel-heading > h3');
-const listNamesInputs = document.querySelectorAll('.panel-heading > input');
-const dropdownbtns = document.querySelectorAll('.panel-heading  button');
-console.info(dropdownbtns);
 
-//loops adds EventListeners
-//check event function
+
 /*
- if (event.type === ENTER){
- currentTarget.focus();
+ A list is a set of cards, where each card contains:
 
- if(dropDownUl.style.display === 'block'){
- dropDownUl.style.display = 'none';
- console.info('click');
- }
- else {
- dropDownUl.style.display = 'block';
- console.info('click');
- }
- }
-
- if(event.type === 'click'){
- currentTarget.focus();
- if(dropDownUl.style.display === 'block'){
- dropDownUl.style.display = 'none';
- }
- else {
- dropDownUl.style.display = 'block';
- }
- }
-
- if(event.type === 'blur'){
- if(dropDownUl.style.display === 'block'){
- dropDownUl.style.display = 'none';
-
- }
- }
-
-/*loop events
+ A description - done
+ A list of icons with the members that are assigned to the card, where each icon is actually the uppercase first letter of their name.
+ A button edit will appear on mouse over on the whole card.
+ Clicking it will open the “Card Edit” modal (outline below
  */
+//make the li delete the to do list
 
 
+//if parant ul is open than click on li will open are you sure window
+//fix the on blur ul handler
 
 
 //adEvent on document
+onOpeningIndex();
 
-for (let listName of listNames) {
+function onOpeningIndex() {
 
-  listName.addEventListener("click",changeName);
-  listName.addEventListener('keydown',changeName);
-  listName.tabIndex = "0";
+  const addCardBtns = document.querySelectorAll('.panel-footer > button');
+  const listNames = document.querySelectorAll('.panel-heading > h3');
+  const listNamesInputs = document.querySelectorAll('.panel-heading > input');
+  const dropDownBtns = document.querySelectorAll('.panel-heading  button');
+  const dropDownLis = document.querySelectorAll('.ul-drop-down >  li');
+  console.info(listNamesInputs);
+
+  addTabIndx(listNames);
+
+  addEventListeners(dropDownLis, ['click'], deleteList);
+
+  addEventListeners(listNames, ['click', 'keydown'], changeName);
+
+  addEventListeners(addCardBtns, ['click'], addCard);
+
+  addEventListeners(listNamesInputs, ['blur', 'keydown'], saveTitleName);
+
+  addEventListeners(dropDownBtns, ['click', 'keydown'], handelDropDown);
 
 }
 
-for (let btn of addCardBtns) {
 
-  btn.addEventListener("click", addCard);
+function deleteList(event) {
 
+  //target the list
+  const target = event.target;
+  const list = target.closest('section');
+  const listsContainer = document.querySelector('.list-container');
+  const listTitle = list.querySelector('h3');
+
+  console.info(listTitle.innerHTML);
+
+
+  const r = confirm(`Deleting ${listTitle.innerHTML} list. Are you sure?`);
+  if (r === true) {
+    listsContainer.removeChild(list);
+  }
 }
 
-
-for (let listNamesInput of listNamesInputs) {
-
-  listNamesInput.addEventListener("blur",saveName);
-  listNamesInput.addEventListener('keydown', saveName);
-}
-
-
-addEventListeners(dropdownbtns, ['click', 'blur', 'keydown'], openDropDwon);
 
 function addEventListeners(elements, arrayOfEvents, eventListener) {
   for (const element of elements) {
@@ -83,37 +74,33 @@ function addEventListeners(elements, arrayOfEvents, eventListener) {
   }
 }
 
-//
 
+function addTabIndx(elements) {
+  for (let element of elements) {
+    element.tabIndex = "0";
+  }
+}
 
-function openDropDwon(event) {
+function handelDropDown(event) {
 
   const currentTarget = event.target;
-  console.info(currentTarget);
-  const currentBtnFather = currentTarget.parentNode;
+  const currentBtnFather = currentTarget.closest('.btn-group');
   const dropDownUl = currentBtnFather.querySelector('.dropdown-menu');
 
-  if (event.type === ENTER){
+//target the ul li
+  if (event.type === ENTER) {
     currentTarget.focus();
     toggleVisibility(dropDownUl);
   }
 
-  if(event.type === 'click'){
+  if (event.type === 'click') {
     currentTarget.focus();
     toggleVisibility(dropDownUl);
-  }
-
-  if(event.type === 'blur'){
-
-    if(dropDownUl.style.display === 'block'){
-      dropDownUl.style.display = 'none';
-
-    }
   }
 }
 
 function toggleVisibility(element) {
-  if(element.style.display === 'block'){
+  if (element.style.display === 'block') {
     element.style.display = 'none';
   }
   else {
@@ -135,20 +122,16 @@ function changeName(event) {
 
     //hide title
     currentTarget.style.display = 'none';
-
   }
 }
 
-function saveName(event) {
+function saveTitleName(event) {
 
   if (event.keyCode === ENTER || event.type === 'blur') {
+
     const target = event.target
-
     const container = target.parentNode;
-
     const titel = container.querySelector('h3');
-
-
 
     if (target.style.display === 'block') {
       //target the h3
@@ -162,20 +145,13 @@ function saveName(event) {
 
 //add new Card to target list
 
-
 function addCard(event) {
 
   const targetElement = event.target;
-
-  //target list
-  const parantSection = targetElement.parentNode.parentNode;
+  const parantSection = targetElement.closest('.panel-default');
   const currentList = parantSection.querySelector('.flex-box');
 
-  //add new Card
-
   createElement('li', 'assignment', currentList);
-
-  console.info(parantSection);
 
 }
 
@@ -215,7 +191,7 @@ function addList() {
 
   //create the title head name
 
-  const listName =  createElement('h3', 'panel-title', listHead);
+  const listName = createElement('h3', 'panel-title', listHead);
 
   listName.innerHTML = "list name";
   listName.tabIndex = '0';
@@ -230,50 +206,46 @@ function addList() {
   titelInPut.setAttribute("value", `${listName.innerHTML}`);
   titelInPut.style.display = "none";
 
-  titelInPut.addEventListener("blur", saveName);
-  titelInPut.addEventListener('keydown', saveName);
+  titelInPut.addEventListener("blur", saveTitleName);
+  titelInPut.addEventListener('keydown', saveTitleName);
 
 
   //create the editBtn container
+  const editBtnContainer = createElement('div', 'btn-group', listHead);
 
-  const editBtnContainer =   createElement('div', 'btn-group', listHead);
-
-  editBtnContainer.innerHTML=`
-          <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-             <span class="caret"></span>
-          </button>
-          <ul class="ul-drop-down dropdown-menu">
-            <li><a href="#">Action</a></li>
-          </ul>
+  editBtnContainer.innerHTML = `
+              <button type="button" class="delete-btn btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="caret"></span>
+            </button>
+            <ul class="ul-drop-down dropdown-menu">
+              <li><a href="#"><span class="padding-right glyphicon glyphicon-trash
+                "></span>Delete</a></li>
+            </ul>
 `
   //target btn and add events
   const editBtn = editBtnContainer.querySelector('button');
-  addEventListeners([editBtn], ['click', 'blur', 'keydown'], openDropDwon);
+  const deleteLi = editBtnContainer.querySelector('li');
+
+  addEventListeners([editBtn], ['click', 'blur', 'keydown'], handelDropDown);
+  addEventListeners([deleteLi], ['click'], deleteList);
 
   //create the list content add it to dad and give class
-
-  const overFlowMask =   createElement('div', 'over-flow-mask', newList);
-
-
+  const overFlowMask = createElement('div', 'over-flow-mask', newList);
 
   //create the list ul
-
   const listUl = createElement('ul', 'flex-box', overFlowMask);
 
-
-
   //create the list footer add it to dad and give class
-
-  const listFooter =  createElement('div', 'panel-footer', newList);
-
+  const listFooter = createElement('div', 'panel-footer', newList);
 
 
   //create the add card btn in footer and give class and onclick
+  const addCardBtn = createElement('button', 'panel-footer-btn', listFooter);
 
-  const addCardBtn = document.createElement('button');
-  listFooter.appendChild(addCardBtn);
-
-  addCardBtn.innerHTML = "add a card...";
+  addCardBtn.innerHTML = `
+<span class="padding-right glyphicon glyphicon-plus"></span>
+            add a card...
+`;
 
   addCardBtn.addEventListener("click", addCard);
 
