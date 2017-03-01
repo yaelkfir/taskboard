@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css">
   <link rel="stylesheet" href="css/main.css">
+  <link href="https://fonts.googleapis.com/css?family=Karla:700|Montserrat:100,300,500|Roboto:100" rel="stylesheet">
   <title>Title</title>
 </head>
 <body>
@@ -25,58 +26,109 @@
 </header>
 <main>
 <div class="board-flex">
-  <section class="panel panel-default">
-    <div class="panel-heading">
-      <h3 class="panel-title">Panel title</h3>
-    </div>
-    <div class="over-flow-mask">
-      <ul class="flex-box">
-        <li class="assignment"></li>
-        <li class="assignment"></li>
-      </ul>
-    </div>
-    <div class="panel-footer"><button type="button">add...</button></div>
-  </section>
+  <div class="list-container board-flex height-100" >
+    <section class="panel panel-default">
+      <div class="be-task-header panel-heading">
+        <h3 class="panel-title">Panel title</h3>
+        <input class="list-name-input" type="text" value ="list name">
+        <div class="no-floats btn-group">
 
-  <section class="panel panel-default">
-    <div class="panel-heading">
-      <h3 class="panel-title">Panel title</h3>
-    </div>
-    <div class="over-flow-mask">
-      <ul class="flex-box">
-        <li class="assignment"></li>
-      </ul>
-    </div>
-    <div class="panel-footer"><button type="button">add...</button></div>
-  </section>
 
-  <section class="panel panel-default">
-    <div class="panel-heading">
-      <h3 class="panel-title">Panel title</h3>
-    </div>
-    <div class="over-flow-mask">
-      <ul class="flex-box">
-        <li class="assignment"></li>
-        <li class="assignment"></li>
-        <li class="assignment"></li>
-      </ul>
-    </div>
-    <div class="panel-footer"><button type="button">add...</button></div>
-  </section>
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h3 class="panel-title">Panel title</h3>
-    </div>
-    <div class="over-flow-mask">
-      <div class="flex-box">
-        <div class="assignment"></div>
-        <div class="assignment"></div>
-        <div class="assignment"></div>
+          <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+             <span class="caret"></span>
+          </button>
+          <ul class="ul-drop-down dropdown-menu">
+            <li><a href="#">Action</a></li>
+          </ul>
+        </div>
       </div>
-    </div>
-    <div class="panel-footer"><button type="button">add...</button></div>
+      <div class=" over-flow-mask">
+        <ul class="flex-box">
+          <li>
+          <li class="assignment"></li>
+          <li class="assignment"></li>
+          </li>
+        </ul>
+      </div>
+      <div class="panel-footer"><button type="button">add a card...</button></div>
+    </section>
+
+    <section class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Panel title</h3>
+        <input class="list-name-input" type="text" value="list name">
+        <div class="no-floats btn-group">
+          <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="caret"></span>
+          </button>
+          <ul class="ul-drop-down dropdown-menu">
+            <li><a href="#">Action</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="over-flow-mask">
+        <ul class="flex-box">
+          <li class="assignment"></li>
+        </ul>
+      </div>
+      <div class="panel-footer"><button type="button">add a card...</button></div>
+    </section>
+
+    <section class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Panel title</h3>
+        <input class="list-name-input" type="text" value="list name">
+        <div class="no-floats btn-group">
+          <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="caret"></span>
+          </button>
+          <ul class="ul-drop-down dropdown-menu">
+            <li><a href="#">Action</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="over-flow-mask">
+        <ul class="flex-box">
+          <li class="assignment"></li>
+          <li class="assignment"></li>
+          <li class="assignment"></li>
+        </ul>
+      </div>
+      <div class="panel-footer">
+        <button type="button">add a card...</button>
+      </div>
+    </section>
+
+    <section class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Panel title</h3>
+        <input class="list-name-input" type="text" value = "list name">
+        <div class="no-floats btn-group">
+          <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="caret"></span>
+          </button>
+          <ul class="ul-drop-down dropdown-menu">
+            <li><a href="#">Action</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="over-flow-mask">
+        <ul class="flex-box">
+          <div class="assignment"></div>
+          <div class="assignment"></div>
+          <div class="assignment"></div>
+          <div class="assignment"></div>
+          <div class="assignment"></div>
+          <div class="assignment"></div>
+          <div class="assignment"></div>
+          <div class="assignment"></div>
+          <div class="assignment"></div>
+        </ul>
+      </div>
+      <div class="panel-footer"><button type="button">add a card...</button></div>
+    </section>
   </div>
-  <button type="button" class="btn btn-primary margin-right">add..</button>
+  <button type="button" class="btn btn-primary margin-right" onclick="addList()">add a list..</button>
 </div>
 
 
@@ -84,6 +136,7 @@
 <footer>
 
 </footer>
+<script src = "js/main.js"></script>
 </body>
 </html>
 
