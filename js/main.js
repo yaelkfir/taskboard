@@ -19,6 +19,10 @@ const ENTER = 13;
 
 //if parant ul is open than click on li will open are you sure window
 //fix the on blur ul handler
+/*
+ problem - when blur in ul handler is active, it closes the ul, coz it blur Yo...
+ if ul is open and blur than ul is block?
+ */
 
 
 //adEvent on document
@@ -35,15 +39,15 @@ function onOpeningIndex() {
 
   addTabIndx(listNames);
 
-  addEventListeners(dropDownLis, ['click'], deleteList);
+  addEventListeners(dropDownLis, ['mousedown'], deleteList);
 
   addEventListeners(listNames, ['click', 'keydown'], changeName);
 
-  addEventListeners(addCardBtns, ['click'], addCard);
+  addEventListeners(addCardBtns, ['click'], addNewCard);
 
   addEventListeners(listNamesInputs, ['blur', 'keydown'], saveTitleName);
 
-  addEventListeners(dropDownBtns, ['click', 'keydown'], handelDropDown);
+  addEventListeners(dropDownBtns, ['click', 'blur', 'keydown'], handelDropDown);
 
 }
 
@@ -97,8 +101,13 @@ function handelDropDown(event) {
     currentTarget.focus();
     toggleVisibility(dropDownUl);
   }
-}
 
+  if (event.type === 'blur') {
+    if (dropDownUl.style.display === 'block') {
+      dropDownUl.style.display = 'none';
+    }
+  }
+}
 function toggleVisibility(element) {
   if (element.style.display === 'block') {
     element.style.display = 'none';
@@ -145,16 +154,26 @@ function saveTitleName(event) {
 
 //add new Card to target list
 
-function addCard(event) {
+function addNewCard(event) {
 
   const targetElement = event.target;
   const parantSection = targetElement.closest('.panel-default');
   const currentList = parantSection.querySelector('.flex-box');
 
-  createElement('li', 'assignment', currentList);
+  const cardWraper = createElement('li', 'assignment', currentList);
+  const cardHeader = createElement('div', 'card-header', cardWraper);
+  const cardDiscription = createElement('p',undefined, cardWraper);
+  cardDiscription.textContent = `Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam laoreet dolore magna aliquam eratvolutpat. Ut wisi`
+  const cardFooter = createElement('div', 'assignment-footer', cardWraper);
+  const userOnTask = createElement('span', 'user-icon', cardFooter);
+  userOnTask.textContent = 'yk';
 
 }
+/*
+ function createCard() {
 
+ }
+ */
 function createElement(tagName, className, parent) {
   const element = document.createElement(tagName);
 
@@ -227,7 +246,7 @@ function addList() {
   const deleteLi = editBtnContainer.querySelector('li');
 
   addEventListeners([editBtn], ['click', 'blur', 'keydown'], handelDropDown);
-  addEventListeners([deleteLi], ['click'], deleteList);
+  addEventListeners([deleteLi], ['mousedown'], deleteList);
 
   //create the list content add it to dad and give class
   const overFlowMask = createElement('div', 'over-flow-mask', newList);
@@ -246,9 +265,7 @@ function addList() {
 <span class="padding-right glyphicon glyphicon-plus"></span>
             add a card...
 `;
-
-  addCardBtn.addEventListener("click", addCard);
-
+  addCardBtn.addEventListener("click", addNewCard);
 }
 
 
