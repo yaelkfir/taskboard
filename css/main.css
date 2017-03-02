@@ -2,11 +2,9 @@ html {
   box-sizing: border-box;
 }
 
-input, button, button {
+input, button {
   border: none;
   background: none;
-  height: 30px;
-  top: 0;
 }
 
 ul, li {
@@ -112,6 +110,7 @@ main {
   border: 0;
   display: flex;
   flex-direction: column;
+  position: relative;
 
 }
 
@@ -260,6 +259,7 @@ footer {
   border: 1px solid #cccccc;
   justify-content: center;
   background-color: white;
+  height: 30px;
 }
 
 .user-icon{
@@ -299,3 +299,22 @@ footer {
   padding-right: 5px;
 }
 
+.padding-top-20{
+  padding-top: 20px;
+}
+
+.card-edit-btn{
+  width: 65px;
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  display: none;
+}
+
+.assignment:hover{
+  cursor: pointer;
+}
+
+.assignment:hover > .card-edit-btn{
+display: block;
+}
