@@ -160,12 +160,13 @@ function addNewCard(event) {
   const parantSection = targetElement.closest('.panel-default');
   const currentList = parantSection.querySelector('.flex-box');
 
-  const cardWraper = createElement('li', 'assignment', currentList);
-  const cardHeader = createElement('div', 'card-header', cardWraper);
-  const cardDiscription = createElement('p',undefined, cardWraper);
-  cardDiscription.textContent = `Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam laoreet dolore magna aliquam eratvolutpat. Ut wisi`
-  const cardFooter = createElement('div', 'assignment-footer', cardWraper);
-  const userOnTask = createElement('span', 'user-icon', cardFooter);
+  const cardWraper = createElement('li', ['assignment'], currentList);
+  const editBtn = createElement('button', ['card-edit-btn','btn','btn-info','btn-xs'], cardWraper);
+  editBtn.textContent = 'Edit card';
+  const cardDiscription = createElement('p',['card-description','p-no-margins'], cardWraper);
+  cardDiscription.textContent = `Lorem ipsum dolor sit amet, consec tetuer adipiscing elit, sed diam laoreet dolore magna aliquam eratvolutpat. Ut wisi`
+  const cardFooter = createElement('div', ['assignment-footer'], cardWraper);
+  const userOnTask = createElement('span', ['user-icon','label', 'label-primary'], cardFooter);
   userOnTask.textContent = 'yk';
 
 }
@@ -176,9 +177,16 @@ function addNewCard(event) {
  */
 function createElement(tagName, className, parent) {
   const element = document.createElement(tagName);
-
+/*
+ a.forEach(function(element) {
+ console.log(element);
+ });
+ */
   if (className !== undefined) {
-    element.className = className;
+    let classesStr = '';
+    className.forEach((e) => { classesStr += ' '+ e;});
+    element.className = classesStr;
+
   }
 
   if (parent !== undefined) {
@@ -200,17 +208,17 @@ function addList() {
 
   //create the list add it to dad and give class
 
-  const newList = createElement('section', 'panel panel-default', listsContainer);
+  const newList = createElement('section', ['panel panel-default'], listsContainer);
 
 
   //create the list head add it to dad and give class
 
-  const listHead = createElement('div', 'panel-heading', newList);
+  const listHead = createElement('div', ['panel-heading'], newList);
 
 
   //create the title head name
 
-  const listName = createElement('h3', 'panel-title', listHead);
+  const listName = createElement('h3', ['panel-title'], listHead);
 
   listName.innerHTML = "list name";
   listName.tabIndex = '0';
@@ -220,7 +228,7 @@ function addList() {
 
   //create input with currnet name as value and add events listiner
 
-  const titelInPut = createElement('input', 'list-name-input', listHead);
+  const titelInPut = createElement('input', ['list-name-input'], listHead);
 
   titelInPut.setAttribute("value", `${listName.innerHTML}`);
   titelInPut.style.display = "none";
@@ -230,7 +238,7 @@ function addList() {
 
 
   //create the editBtn container
-  const editBtnContainer = createElement('div', 'btn-group', listHead);
+  const editBtnContainer = createElement('div', ['btn-group'], listHead);
 
   editBtnContainer.innerHTML = `
               <button type="button" class="delete-btn btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -249,17 +257,17 @@ function addList() {
   addEventListeners([deleteLi], ['mousedown'], deleteList);
 
   //create the list content add it to dad and give class
-  const overFlowMask = createElement('div', 'over-flow-mask', newList);
+  const overFlowMask = createElement('div', ['over-flow-mask'], newList);
 
   //create the list ul
-  const listUl = createElement('ul', 'flex-box', overFlowMask);
+  const listUl = createElement('ul', ['flex-box'], overFlowMask);
 
   //create the list footer add it to dad and give class
-  const listFooter = createElement('div', 'panel-footer', newList);
+  const listFooter = createElement('div', ['panel-footer'], newList);
 
 
   //create the add card btn in footer and give class and onclick
-  const addCardBtn = createElement('button', 'panel-footer-btn', listFooter);
+  const addCardBtn = createElement('button', ['panel-footer-btn'], listFooter);
 
   addCardBtn.innerHTML = `
 <span class="padding-right glyphicon glyphicon-plus"></span>
