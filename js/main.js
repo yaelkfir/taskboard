@@ -26,29 +26,29 @@ const ENTER = 13;
 
 
 //adEvent on document
-onOpeningIndex();
 
-function onOpeningIndex() {
+function createElement(tagName, className, parent) {
+  const element = document.createElement(tagName);
+  /*
+   a.forEach(function(element) {
+   console.log(element);
+   });
+   */
+  if (className !== undefined) {
+    let classesStr = '';
+    className.forEach((e) => {
+      classesStr += ' ' + e;
+    });
+    element.className = classesStr;
 
-  const addCardBtns = document.querySelectorAll('.panel-footer > button');
-  const listNames = document.querySelectorAll('.panel-heading > h3');
-  const listNamesInputs = document.querySelectorAll('.panel-heading > input');
-  const dropDownBtns = document.querySelectorAll('.panel-heading  button');
-  const dropDownLis = document.querySelectorAll('.ul-drop-down >  li');
-  console.info(listNamesInputs);
+  }
 
-  addTabIndx(listNames);
+  if (parent !== undefined) {
+    parent.appendChild(element);
 
-  addEventListeners(dropDownLis, ['mousedown'], deleteList);
+  }
 
-  addEventListeners(listNames, ['click', 'keydown'], changeName);
-
-  addEventListeners(addCardBtns, ['click'], addNewCard);
-
-  addEventListeners(listNamesInputs, ['blur', 'keydown'], saveTitleName);
-
-  addEventListeners(dropDownBtns, ['click', 'blur', 'keydown'], handelDropDown);
-
+  return element;
 }
 
 
@@ -78,12 +78,6 @@ function addEventListeners(elements, arrayOfEvents, eventListener) {
   }
 }
 
-
-function addTabIndx(elements) {
-  for (let element of elements) {
-    element.tabIndex = "0";
-  }
-}
 
 function handelDropDown(event) {
 
@@ -125,9 +119,9 @@ function changeName(event) {
 
     //target the input
 
-    const titelInPut = currentPanelHeader.querySelector('input')
-    titelInPut.style.display = 'block';
-    titelInPut.focus();
+    const titleInPut = currentPanelHeader.querySelector('input');
+    titleInPut.style.display = 'block';
+    titleInPut.focus();
 
     //hide title
     currentTarget.style.display = 'none';
@@ -138,7 +132,7 @@ function saveTitleName(event) {
 
   if (event.keyCode === ENTER || event.type === 'blur') {
 
-    const target = event.target
+    const target = event.target;
     const container = target.parentNode;
     const titel = container.querySelector('h3');
 
@@ -156,78 +150,133 @@ function saveTitleName(event) {
 
 function addNewCard(event) {
 
+  //how to add the members?
+  //take 2 1st letter from each str
+  //chang the text
+  function scrollTo(element, to, duration){
+    if (duration <= 0) return;
+    const difference = to - element.scrollTop;
+    const perTick = difference / duration * 10;
+
+    setTimeout(function() {
+      element.scrollTop = element.scrollTop + perTick;
+      if (element.scrollTop == to) return;
+      scrollTo(element, to, duration - 10);
+    }, 10)
+  }
+
   const targetElement = event.target;
+  console.info(targetElement);
+targetElement.blur();
+
   const parantSection = targetElement.closest('.panel-default');
+
   const currentList = parantSection.querySelector('.flex-box');
 
   const cardWraper = createElement('li', ['assignment'], currentList);
-  const editBtn = createElement('button', ['card-edit-btn','btn','btn-info','btn-xs'], cardWraper);
+
+  const editBtn = createElement('button', ['card-edit-btn', 'btn', 'btn-info', 'btn-xs'], cardWraper);
   editBtn.textContent = 'Edit card';
-  const cardDiscription = createElement('p',['card-description','p-no-margins'], cardWraper);
-  cardDiscription.textContent = `Lorem ipsum dolor sit amet, consec tetuer adipiscing elit, sed diam laoreet dolore magna aliquam eratvolutpat. Ut wisi`
-  const cardFooter = createElement('div', ['assignment-footer'], cardWraper);
-  const userOnTask = createElement('span', ['user-icon','label', 'label-primary'], cardFooter);
-  userOnTask.textContent = 'yk';
 
-}
-/*
- function createCard() {
+  const cardDiscription = createElement('p', ['card-description', 'p-no-margins'], cardWraper);
+  cardDiscription.textContent = 'new card';
 
- }
- */
-function createElement(tagName, className, parent) {
-  const element = document.createElement(tagName);
-/*
- a.forEach(function(element) {
- console.log(element);
- });
- */
-  if (className !== undefined) {
-    let classesStr = '';
-    className.forEach((e) => { classesStr += ' '+ e;});
-    element.className = classesStr;
+  const parntScroler = parantSection.querySelector('.over-flow-mask');
 
-  }
-
-  if (parent !== undefined) {
-    parent.appendChild(element);
-
-  }
-  console.info(element);
-  return element;
+  scrollTo(parntScroler, parntScroler.scrollHeight, 300);
 }
 
-//add new list to main
+
+//new list to main
+
+function createList(list) {
+
+  function handelListName(obj) {
+
+    if (obj !== undefined) {
+      listName.innerHTML = obj.title;
+
+    }
+    else {
+      listName.innerHTML = "brand new card";
+    }
+  }
 
 
-function addList() {
+  function handelCards(obj) {
 
-  //take the list container
+    if (obj !== undefined) {
+
+      let tasks = list.tasks;
+      for (task of tasks) {
+        //create card wraper and appand to dad ul
+        const cardWraper = createElement('li', ['assignment'], listUl);
+        cardWraper.tabIndex = '0';
+
+
+        //create edit btn and appand to dad ul
+        const editBtn = createElement('button', ['card-edit-btn', 'btn', 'btn-info', 'btn-xs'], cardWraper);
+        editBtn.textContent = 'Edit card';
+
+
+        //create interactive task description
+        const cardDiscription = createElement('p', ['card-description', 'p-no-margins'], cardWraper);
+        cardDiscription.textContent = task.text;
+
+        //loop the member
+
+        membersMaker();
+
+        function getInishials(str) {
+
+          const strArr = str.split(' ');
+          const twoWordArr = [];
+          for (const smallStr of strArr) {
+            const letter = smallStr[0].toUpperCase();
+            console.info(letter);
+
+            console.log(letter);
+            twoWordArr.push(letter);
+          }
+          return twoWordArr.join('');
+        }
+
+        function membersMaker() {
+          if (task.members.length > 0) {
+
+            const cardFooter = createElement('div', ['assignment-footer'], cardWraper);
+
+            for (let member of task.members) {
+              const userOnTask = createElement('span', ['user-icon', 'label', 'label-primary'], cardFooter);
+              userOnTask.innerHTML = getInishials(member);
+            }
+          }
+        }
+      }
+    }
+  }
+
+
+  /*create the list*/
+
   const listsContainer = document.querySelector('main > div > div');
 
-
   //create the list add it to dad and give class
-
   const newList = createElement('section', ['panel panel-default'], listsContainer);
 
-
   //create the list head add it to dad and give class
-
-  const listHead = createElement('div', ['panel-heading'], newList);
-
+  const listHead = createElement('div', ['panel-heading, task-name-wraper'], newList);
 
   //create the title head name
-
   const listName = createElement('h3', ['panel-title'], listHead);
 
-  listName.innerHTML = "list name";
+  handelListName(list);
   listName.tabIndex = '0';
 
   listName.addEventListener("click", changeName);
   listName.addEventListener('keydown', changeName);
 
   //create input with currnet name as value and add events listiner
-
   const titelInPut = createElement('input', ['list-name-input'], listHead);
 
   titelInPut.setAttribute("value", `${listName.innerHTML}`);
@@ -236,19 +285,18 @@ function addList() {
   titelInPut.addEventListener("blur", saveTitleName);
   titelInPut.addEventListener('keydown', saveTitleName);
 
-
   //create the editBtn container
   const editBtnContainer = createElement('div', ['btn-group'], listHead);
 
   editBtnContainer.innerHTML = `
               <button type="button" class="delete-btn btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <span class="caret"></span>
+              <span class="smaller-glyphicon glyphicon glyphicon-triangle-bottom"></span>
             </button>
             <ul class="ul-drop-down dropdown-menu">
               <li><a href="#"><span class="padding-right glyphicon glyphicon-trash
                 "></span>Delete</a></li>
             </ul>
-`
+`;
   //target btn and add events
   const editBtn = editBtnContainer.querySelector('button');
   const deleteLi = editBtnContainer.querySelector('li');
@@ -261,19 +309,55 @@ function addList() {
 
   //create the list ul
   const listUl = createElement('ul', ['flex-box'], overFlowMask);
-
+  handelCards(list);
   //create the list footer add it to dad and give class
-  const listFooter = createElement('div', ['panel-footer'], newList);
-
+  const listFooter = createElement('div', ['panel-footer', 'list-footer'], newList);
+  listFooter.tabIndex = '0';
 
   //create the add card btn in footer and give class and onclick
-  const addCardBtn = createElement('button', ['panel-footer-btn'], listFooter);
+  const addCardBtn = createElement('span', ['panel-footer-btn'], listFooter);
 
   addCardBtn.innerHTML = `
 <span class="padding-right glyphicon glyphicon-plus"></span>
-            add a card...
+            Add New Card
 `;
-  addCardBtn.addEventListener("click", addNewCard);
+  listFooter.addEventListener("click", addNewCard);
+
 }
+
+
+function handelListMaking(data) {
+
+  if (data !== undefined) {
+    const lists = data.board;
+
+    for (let list of lists) {
+      console.info(list);
+      createList(list);
+    }
+  }
+
+  else {
+    createList();
+  }
+}
+
+
+//get JSON
+function reqListener(event) {
+  const target = event.target
+
+  let data = JSON.parse(target.responseText);
+
+  handelListMaking(data);
+
+  //board is array of obj
+
+}
+
+const oReq = new XMLHttpRequest();
+oReq.addEventListener("load", reqListener);
+oReq.open("GET", "assets/board.json");
+oReq.send();
 
 
