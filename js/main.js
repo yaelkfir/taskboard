@@ -147,6 +147,23 @@ function saveTitleName(event) {
 }
 
 //add new Card to target list
+function toggelModal(event){
+
+  console.log(event.target);
+
+  const cardModal = document.querySelector('.light-box');
+  if (cardModal.style.display === 'flex') {
+    cardModal.style.display = 'none';
+  }
+  else {
+    cardModal.style.display = 'flex';
+    const closecardModalBtns = cardModal.querySelectorAll('.close-modal');
+
+    for(const closecardModalBtn of closecardModalBtns ){
+      closecardModalBtn.addEventListener("click", toggelModal);
+    }
+  }
+}
 
 function addNewCard(event) {
 
@@ -177,6 +194,7 @@ targetElement.blur();
 
   const editBtn = createElement('button', ['card-edit-btn', 'btn', 'btn-info', 'btn-xs'], cardWraper);
   editBtn.textContent = 'Edit card';
+  editBtn.addEventListener("click", toggelModal);
 
   const cardDiscription = createElement('p', ['card-description', 'p-no-margins'], cardWraper);
   cardDiscription.textContent = 'new card';
@@ -217,7 +235,7 @@ function createList(list) {
         //create edit btn and appand to dad ul
         const editBtn = createElement('button', ['card-edit-btn', 'btn', 'btn-info', 'btn-xs'], cardWraper);
         editBtn.textContent = 'Edit card';
-
+        editBtn.addEventListener("click", toggelModal);
 
         //create interactive task description
         const cardDiscription = createElement('p', ['card-description', 'p-no-margins'], cardWraper);

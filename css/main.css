@@ -79,16 +79,17 @@ header .logo {
   width: 260px;
   text-transform: capitalize;
 }
-
+.panel-title:hover,
 .panel-title:focus{
   outline: none;
-  background-color: #069db1;
+  background-color: #e1e1e6;
 }
 
 .panel-body {
   display: flex;
   justify-content: center;
 }
+
 
 /* LIST SCROLL  */
 .over-flow-mask {
@@ -150,7 +151,7 @@ header .logo {
 
 
 
-.btn-primary {
+.add-list-btn-primary {
   width: 300px;
   height: 50px;
   font-size: 16px;
@@ -337,7 +338,7 @@ bottom :-20px;
   border-top: 1px solid #ddd;
   border-bottom-right-radius: 3px;
   border-bottom-left-radius: 3px;
-  padding: 15px;
+  padding: 10px 15px;
   cursor: pointer;
 }
 
@@ -353,6 +354,14 @@ bottom :-20px;
 }
 
 /* STYLES */
+.capitalize{
+  text-transform: capitalize;
+
+}
+
+.display-block{
+  display: block;
+}
 .no-floats {
   float: none;
   position: relative;
@@ -384,7 +393,60 @@ bottom :-20px;
   border-left: 0;
 }
 
+/*light-box*/
+.light-box{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(51, 51, 51, 0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1200;
+}
 
+.light-box-body{
+  padding-top: 30px;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-bottom: 10px;
+  height: calc(100% - 120px);
+  overflow-x: hidden;
+  overflow-y:auto;
+}
+.check-box-list{
+  border: 1px solid #cccccc;
+  padding: 15px;
+  width: 60%;
+  max-height: 120px;
+  overflow-y: auto;
+  border-radius: 5px;
+}
+.delete-card{
+  color: #fff;
+  background-color: #F44336;
+  border-color: #F44336;
+}
+
+.delete-card:hover,
+.delete-card:focus,
+.delete-card:active,
+.delete-card:focus:active{
+  color: #fff;
+  background-color: #c6372d;
+  border-color: #c6372d;
+}
+
+
+.full-height-width{
+  height: 100%;
+  width: 100%;
+}
+.width-90{
+  width: 60%;
+}
 
 /* Responsive */
 
