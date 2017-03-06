@@ -55,8 +55,8 @@ function createList() {
       listName.innerHTML = list.title;
       listName.tabIndex = '0';
 
-      listName.addEventListener("click", changeName);
-      listName.addEventListener('keydown', changeName);
+      listName.addEventListener("click", changeListName);
+      listName.addEventListener('keydown', changeListName);
 
       //create input with currnet name as value and add events listiner
       const titelInPut = createElement('input', ['list-name-input'], listHead);
@@ -64,8 +64,8 @@ function createList() {
       titelInPut.setAttribute("value", `${listName.innerHTML}`);
       titelInPut.style.display = "none";
 
-      titelInPut.addEventListener("blur", saveTitleName);
-      titelInPut.addEventListener('keydown', saveTitleName);
+      titelInPut.addEventListener("blur", saveListName);
+      titelInPut.addEventListener('keydown', saveListName);
 
       //create the editBtn container
       const editBtnContainer = createElement('div', ['btn-group'], listHead);
@@ -122,8 +122,8 @@ function createList() {
     listName.innerHTML = "list name";
     listName.tabIndex = '0';
 
-    listName.addEventListener("click", changeName);
-    listName.addEventListener('keydown', changeName);
+    listName.addEventListener("click", changeListName);
+    listName.addEventListener('keydown', changeListName);
 
     //create input with currnet name as value and add events listiner
     const titelInPut = createElement('input', ['list-name-input'], listHead);
@@ -131,8 +131,8 @@ function createList() {
     titelInPut.setAttribute("value", `${listName.innerHTML}`);
     titelInPut.style.display = "none";
 
-    titelInPut.addEventListener("blur", saveTitleName);
-    titelInPut.addEventListener('keydown', saveTitleName);
+    titelInPut.addEventListener("blur", saveListName);
+    titelInPut.addEventListener('keydown', saveListName);
 
     //create the editBtn container
     const editBtnContainer = createElement('div', ['btn-group'], listHead);
@@ -194,8 +194,8 @@ function createList() {
   const listName = createElement('h3', ['panel-title'], listHead);
   listName.tabIndex = '0';
 
-  listName.addEventListener("click", changeName);
-  listName.addEventListener('keydown', changeName);
+  listName.addEventListener("click", changeListName);
+  listName.addEventListener('keydown', changeListName);
 
   //create input with currnet name as value and add events listiner
   const titelInPut = createElement('input', ['list-name-input'], listHead);
@@ -203,8 +203,8 @@ function createList() {
   titelInPut.setAttribute("value", `${listName.innerHTML}`);
   titelInPut.style.display = "none";
 
-  titelInPut.addEventListener("blur", saveTitleName);
-  titelInPut.addEventListener('keydown', saveTitleName);
+  titelInPut.addEventListener("blur", saveListName);
+  titelInPut.addEventListener('keydown', saveListName);
 
   //create the editBtn container
   const editBtnContainer = createElement('div', ['btn-group'], listHead);

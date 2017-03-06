@@ -30,10 +30,14 @@ const ENTER = 13;
 function createElement(tagName, className, parent) {
   const element = document.createElement(tagName);
   /*
+
    a.forEach(function(element) {
    console.log(element);
    });
+   const cardDiscription = createElement('p', ['card-description', 'p-no-margins'], cardWraper);
+
    */
+
   if (className !== undefined) {
     let classesStr = '';
     className.forEach((e) => {
@@ -111,7 +115,7 @@ function toggleVisibility(element) {
   }
 }
 
-function changeName(event) {
+function changeListName(event) {
 
   if (event.keyCode === ENTER || event.type === 'click') {
     const currentTarget = event.target;
@@ -128,7 +132,7 @@ function changeName(event) {
   }
 }
 
-function saveTitleName(event) {
+function saveListName(event) {
 
   if (event.keyCode === ENTER || event.type === 'blur') {
 
@@ -291,8 +295,8 @@ function createList(list) {
   handelListName(list);
   listName.tabIndex = '0';
 
-  listName.addEventListener("click", changeName);
-  listName.addEventListener('keydown', changeName);
+  listName.addEventListener("click", changeListName);
+  listName.addEventListener('keydown', changeListName);
 
   //create input with currnet name as value and add events listiner
   const titelInPut = createElement('input', ['list-name-input'], listHead);
@@ -300,8 +304,8 @@ function createList(list) {
   titelInPut.setAttribute("value", `${listName.innerHTML}`);
   titelInPut.style.display = "none";
 
-  titelInPut.addEventListener("blur", saveTitleName);
-  titelInPut.addEventListener('keydown', saveTitleName);
+  titelInPut.addEventListener("blur", saveListName);
+  titelInPut.addEventListener('keydown', saveListName);
 
   //create the editBtn container
   const editBtnContainer = createElement('div', ['btn-group'], listHead);
@@ -360,6 +364,64 @@ function handelListMaking(data) {
   }
 }
 
+function MembersHandeler() {
+  console.info(event.target);
+  craeteMember();
+}
+
+//make a function similar to the input h3 save and change name
+
+
+function craeteMember() {
+
+  function changeMember(event) {
+
+    const currentTarget = event.target;
+    const currentMemberLi = currentTarget.closest('li');
+
+
+    const memberInPut = currentMemberLi.querySelector('input');
+    const memberName = currentMemberLi.querySelector('span');
+    console.info(memberInPut);
+
+    memberInPut.style.display='block';
+    memberInPut.setAttribute( 'value', `${memberName.textContent}` )
+    memberName.style.display='none';
+
+
+
+
+  }
+
+  const membersList = document.querySelector('.members-list');
+  const ListInput = document.querySelector('.add-new-member');
+
+
+  const member = createElement('li', ['list-group-item'], membersList);
+
+  const memberInPlace = membersList.insertBefore(member, ListInput );
+
+
+  const memberName = createElement('span', undefined, memberInPlace);
+  memberName.textContent ='namle'
+  const memberNameInput = createElement('input', ['list-name-input','member-name-input'], memberInPlace);
+
+  const btnContainer = createElement('div', ['btn-container'], memberInPlace);
+  btnContainer.innerHTML =` 
+          <button class="edit-member btn btn-info btn-xs">Edit</button>
+          <button class="delete-member btn btn-danger btn-xs">Delete</button>
+`
+  const deleltMemberBtn = btnContainer.querySelector('.delete-member');
+  const editMemberBtn = btnContainer.querySelector('.edit-member');
+
+
+  deleltMemberBtn.addEventListener("click", craeteMember);
+  editMemberBtn.addEventListener("click", changeMember);
+
+}
+
+craeteMember();
+
 
 //get JSON
 function reqListener(event) {
@@ -372,6 +434,7 @@ function reqListener(event) {
   //board is array of obj
 
 }
+
 
 const oReq = new XMLHttpRequest();
 oReq.addEventListener("load", reqListener);

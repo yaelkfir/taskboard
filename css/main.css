@@ -25,7 +25,6 @@ main {
   overflow-x: scroll;
   overflow-y: hidden;
   padding: 30px;
-  display: flex;
   width: 100%;
   align-items: flex-start;
   height: calc(100% - 51px);
@@ -178,13 +177,12 @@ header .logo {
   border: 1px solid #ddd;
   display: none;
   color: #000;
+  margin-right: 10px;
+
 }
 .list-name-input:focus{
   outline: none;
 }
-
-
-
 
 .ul-drop-down {
   display: none;
@@ -196,7 +194,6 @@ header .logo {
 .ul-drop-down > li > a {
   padding: 5px 15px;
 }
-
 
 .panel-footer-btn{
   width: 100%;
@@ -358,7 +355,9 @@ bottom :-20px;
   text-transform: capitalize;
 
 }
-
+.all-caps{
+  text-transform: uppercase;
+}
 .display-block{
   display: block;
 }
@@ -446,6 +445,54 @@ bottom :-20px;
 }
 .width-90{
   width: 60%;
+}
+/*members-page*/
+.members-list{
+  width: 50%;
+}
+
+
+
+.members-list li:not(.add-new-member){
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 45px;
+  align-items: center;
+  padding: 0 15px;
+}
+
+.add-new-member{
+  display: flex;
+  height: 60px;
+}
+
+.btn-container{
+  display: none;
+  flex-direction: row;
+  justify-content: flex-end;
+  width: 30%;
+}
+
+.edit-member{
+  margin-right: 10px;
+}
+
+.member-name-input{
+  width: 70%;
+  font-size: 14px;
+  height: 30px;
+}
+
+.members-list li:not(.add-new-member):hover > .btn-container{
+  display: flex;
+
+}
+.members-list li:not(.add-new-member) span{
+  width:70%;
+}
+.boards{
+  
 }
 
 /* Responsive */
