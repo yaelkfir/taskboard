@@ -1,31 +1,21 @@
 /**
  * Created by yaelo on 2/27/17.
  */
-
+const appData = {
+  lists: [],
+  members: []
+};
 
 const ENTER = 13;
 
-
-/*
- A list is a set of cards, where each card contains:
-
- A description - done
- A list of icons with the members that are assigned to the card, where each icon is actually the uppercase first letter of their name.
- A button edit will appear on mouse over on the whole card.
- Clicking it will open the “Card Edit” modal (outline below
- */
-//make the li delete the to do list
-
-
-//if parant ul is open than click on li will open are you sure window
-//fix the on blur ul handler
-/*
- problem - when blur in ul handler is active, it closes the ul, coz it blur Yo...
- if ul is open and blur than ul is block?
- */
-
-
-//adEvent on document
+/*----general functions ----*/
+function addEventListeners(elements, arrayOfEvents, eventListener) {
+  for (const element of elements) {
+    for (const event of arrayOfEvents) {
+      element.addEventListener(event, eventListener);
+    }
+  }
+}
 
 function createElement(tagName, className, parent) {
   const element = document.createElement(tagName);
@@ -55,33 +45,223 @@ function createElement(tagName, className, parent) {
   return element;
 }
 
+function toggleVisibility(element) {
+  if (element.style.display === 'block') {
+    element.style.display = 'none';
+  }
+  else {
+    element.style.display = 'block';
+  }
+}
+/*----end of general functions ----*/
 
+//create list
+function handelListMaking(data) {
+
+
+  if (data !== undefined) {
+    const lists = data;
+    const main = document.querySelector('main');
+
+    main.innerHTML = `<div class="boards board-flex">
+    <div class="list-container board-flex height-100">
+    </div>
+    <button type="button" class="btn add-list-btn-primary  btn-primary margin-right" onclick="handelListMaking()">add new list..</button>
+  </div>`;
+
+    lists.forEach((list) => {
+      createList(list)
+    });
+  }
+
+  else {
+    createList();
+  }
+
+  function createList(list) {
+
+    function handelListName(obj) {
+
+      if (obj !== undefined) {
+        listName.innerHTML = obj.title;
+
+      }
+      else {
+        listName.innerHTML = "brand new list";
+      }
+    }
+
+    //cards
+    function handelCards(obj) {
+
+      if (obj !== undefined) {
+        let tasks = obj.tasks;
+
+        for (task of tasks) {
+
+          //create card wraper and appand to dad ul
+          const cardWraper = createElement('li', ['assignment'], listUl);
+          cardWraper.tabIndex = '0';
+
+
+          //create edit btn and appand to dad ul
+          const editBtn = createElement('button', ['card-edit-btn', 'btn', 'btn-info', 'btn-xs'], cardWraper);
+          editBtn.textContent = 'Edit card';
+          editBtn.addEventListener("click", toggelModal);
+
+          //create interactive task description
+          const cardDiscription = createElement('p', ['card-description', 'p-no-margins'], cardWraper);
+
+          cardDiscription.textContent = task.text;
+
+          //loop the member
+
+          membersMaker();
+
+          function getInishials(str) {
+
+            const strArr = str.split(' ');
+            const twoWordArr = [];
+            for (const smallStr of strArr) {
+              const letter = smallStr[0].toUpperCase();
+
+              twoWordArr.push(letter);
+            }
+            return twoWordArr.join('');
+          }
+
+          function membersMaker() {
+            if (task.members.length > 0) {
+
+              const cardFooter = createElement('div', ['assignment-footer'], cardWraper);
+
+              for (let member of task.members) {
+
+                const userOnTask = createElement('span', ['user-icon', 'label', 'label-primary'], cardFooter);
+                userOnTask.setAttribute('title', `${member}`);
+                userOnTask.innerHTML = getInishials(member);
+              }
+            }
+          }
+
+
+        }
+      }
+    }
+
+
+    /*create the list*/
+
+    const listsContainer = document.querySelector('main > div > div');
+
+    const newList = createElement('section', ['panel panel-default'], listsContainer);
+
+    const listHead = createElement('div', ['panel-heading, task-name-wraper'], newList);
+
+    const listName = createElement('h3', ['panel-title'], listHead);
+
+
+    handelListName(list);
+    listName.tabIndex = '0';
+
+    listName.addEventListener("click", changeListName);
+    listName.addEventListener('keydown', changeListName);
+
+    const titelInPut = createElement('input', ['list-name-input'], listHead);
+
+    titelInPut.setAttribute("value", `${listName.innerHTML}`);
+    titelInPut.style.display = "none";
+
+    titelInPut.addEventListener("blur", saveListName);
+    titelInPut.addEventListener('keydown', saveListName);
+
+    //create the editBtn container
+    const editBtnContainer = createElement('div', ['btn-group'], listHead);
+
+    editBtnContainer.innerHTML = `
+              <button type="button" class="delete-btn btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="smaller-glyphicon glyphicon glyphicon-triangle-bottom"></span>
+            </button>
+            <ul class="ul-drop-down dropdown-menu">
+              <li><a href="#"><span class="padding-right glyphicon glyphicon-trash
+                "></span>Delete</a></li>
+            </ul>
+`;
+    //target btn and add events
+    const editBtn = editBtnContainer.querySelector('button');
+    const deleteLi = editBtnContainer.querySelector('li');
+
+    addEventListeners([editBtn], ['click', 'blur', 'keydown'], handelDropDown);
+    addEventListeners([deleteLi], ['mousedown'], deleteList);
+
+    //create the list content add it to dad and give class
+    const overFlowMask = createElement('div', ['over-flow-mask'], newList);
+
+    //create the list ul
+    const listUl = createElement('ul', ['flex-box'], overFlowMask);
+    handelCards(list);
+    //create the list footer add it to dad and give class
+    const listFooter = createElement('div', ['panel-footer', 'list-footer'], newList);
+    listFooter.tabIndex = '0';
+
+    //create the add card btn in footer and give class and onclick
+    const addCardBtn = createElement('span', ['panel-footer-btn'], listFooter);
+
+    addCardBtn.innerHTML = `
+<span class="padding-right glyphicon glyphicon-plus"></span>Add New Card`;
+    listFooter.addEventListener("click", addNewCard);
+
+    if (list === undefined) {
+
+      //add to appData
+      let temList = {
+        title: `${listName.textContent}`,
+        tasks: []
+      }
+      appData.lists.push(temList);
+    }
+  }
+}
+
+
+//list btns and input
 function deleteList(event) {
 
   //target the list
   const target = event.target;
   const list = target.closest('section');
   const listsContainer = document.querySelector('.list-container');
-  const listTitle = list.querySelector('h3');
+  const listTitle = list.querySelector('h3').textContent;
 
-  console.info(listTitle.innerHTML);
-
-
-  const r = confirm(`Deleting ${listTitle.innerHTML} list. Are you sure?`);
+  const r = confirm(`Deleting ${listTitle} list. Are you sure?`);
   if (r === true) {
     listsContainer.removeChild(list);
+
+    //remove from appData
+    let currentList = appData.lists.find((list) => {
+      return list.title === listTitle
+    });
+    const index = appData.lists.indexOf(currentList);
+
+    appData.lists.splice(index, 1);
   }
 }
 
+function changeListName(event) {
 
-function addEventListeners(elements, arrayOfEvents, eventListener) {
-  for (const element of elements) {
-    for (const event of arrayOfEvents) {
-      element.addEventListener(event, eventListener);
-    }
+  if (event.keyCode === ENTER || event.type === 'click') {
+    const currentTarget = event.target;
+    const currentPanelHeader = currentTarget.parentNode;
+    //target the input
+
+    const titleInPut = currentPanelHeader.querySelector('input');
+    titleInPut.style.display = 'block';
+    titleInPut.focus();
+
+    //hide title
+    currentTarget.style.display = 'none';
   }
 }
-
 
 function handelDropDown(event) {
 
@@ -106,80 +286,44 @@ function handelDropDown(event) {
     }
   }
 }
-function toggleVisibility(element) {
-  if (element.style.display === 'block') {
-    element.style.display = 'none';
-  }
-  else {
-    element.style.display = 'block';
-  }
-}
-
-function changeListName(event) {
-
-  if (event.keyCode === ENTER || event.type === 'click') {
-    const currentTarget = event.target;
-    const currentPanelHeader = currentTarget.parentNode;
-
-    //target the input
-
-    const titleInPut = currentPanelHeader.querySelector('input');
-    titleInPut.style.display = 'block';
-    titleInPut.focus();
-
-    //hide title
-    currentTarget.style.display = 'none';
-  }
-}
 
 function saveListName(event) {
 
   if (event.keyCode === ENTER || event.type === 'blur') {
 
     const target = event.target;
-    const container = target.parentNode;
-    const titel = container.querySelector('h3');
+    const container = target.closest('.task-name-wraper');
+    console.info(container);
+    const title = container.querySelector('h3');
+
+
+    //Change in appData
+    let currentList = appData.lists.find((list) => {
+      return list.title === title.textContent
+    });
+    console.info(currentList);
+    const index = appData.lists.indexOf(currentList);
+    console.info(index);
 
     if (target.style.display === 'block') {
       //target the h3
-      titel.innerHTML = target.value;
-      titel.style.display = 'block';
+      title.textContent = target.value;
+      title.style.display = 'block';
       target.style.display = 'none';
-
     }
-  }
-}
-
-//add new Card to target list
-function toggelModal(event){
-
-  console.log(event.target);
-
-  const cardModal = document.querySelector('.light-box');
-  if (cardModal.style.display === 'flex') {
-    cardModal.style.display = 'none';
-  }
-  else {
-    cardModal.style.display = 'flex';
-    const closecardModalBtns = cardModal.querySelectorAll('.close-modal');
-
-    for(const closecardModalBtn of closecardModalBtns ){
-      closecardModalBtn.addEventListener("click", toggelModal);
-    }
+    appData.lists[index].title = target.value;
   }
 }
 
 function addNewCard(event) {
 
-  //how to add the members?
-  //take 2 1st letter from each str
-  //chang the text
-  function scrollTo(element, to, duration){
+//scroll to the lest card added.
+  function scrollTo(element, to, duration) {
     if (duration <= 0) return;
     const difference = to - element.scrollTop;
     const perTick = difference / duration * 10;
 
-    setTimeout(function() {
+    setTimeout(function () {
       element.scrollTop = element.scrollTop + perTick;
       if (element.scrollTop == to) return;
       scrollTo(element, to, duration - 10);
@@ -187,208 +331,180 @@ function addNewCard(event) {
   }
 
   const targetElement = event.target;
-  console.info(targetElement);
-targetElement.blur();
+  targetElement.blur();
 
   const parantSection = targetElement.closest('.panel-default');
-
+  const listTitle = parantSection.querySelector('h3');
   const currentList = parantSection.querySelector('.flex-box');
-
   const cardWraper = createElement('li', ['assignment'], currentList);
-
   const editBtn = createElement('button', ['card-edit-btn', 'btn', 'btn-info', 'btn-xs'], cardWraper);
   editBtn.textContent = 'Edit card';
   editBtn.addEventListener("click", toggelModal);
-
   const cardDiscription = createElement('p', ['card-description', 'p-no-margins'], cardWraper);
   cardDiscription.textContent = 'new card';
-
   const parntScroler = parantSection.querySelector('.over-flow-mask');
 
   scrollTo(parntScroler, parntScroler.scrollHeight, 300);
+
+  let tempCard = {
+    text: `${cardDiscription.textContent }`,
+    members: []
+  };
+
+  for (let list of appData.lists) {
+    if (list.title === listTitle.textContent) {
+
+      list.tasks.push(tempCard);
+    }
+  }
+}
+
+//edit card modal window
+function toggelModal(event) {
+
+  const cardModal = document.querySelector('.light-box');
+  let target = event.target;
+
+  const currentlist = target.closest('.panel');
+  const currentcard = target.closest('.assignment');
+
+  console.info(target);
+  console.info(currentlist);
+  console.info(currentcard);
+
+
+  if (cardModal.style.display === 'flex') {
+    cardModal.style.display = 'none';
+  }
+  else {
+    cardModal.style.display = 'flex';
+    const closecardModalBtns = cardModal.querySelectorAll('.close-modal');
+
+    for (const closecardModalBtn of closecardModalBtns) {
+      closecardModalBtn.addEventListener("click", toggelModal);
+    }
+  }
 }
 
 
-//new list to main
+//member functions
+/*
+ handelmember btns
+ if event.target.classlist.includs('edit-member'){
 
-function createList(list) {
+ }
+ */
 
-  function handelListName(obj) {
+function changeMember(event) {
+
+  const currentTarget = event.target;
+
+  const currentMemberLi = currentTarget.closest('li');
+  const editBtnContainer = currentMemberLi.querySelector('.btn-container');
+  const saveNameBtnContainer = currentMemberLi.querySelector('.edit-member-btn-container');
+  const memberInPut = currentMemberLi.querySelector('input');
+  const memberName = currentMemberLi.querySelector('span');
+
+  saveNameBtnContainer.style.display = 'flex';
+  memberInPut.style.display = 'block';
+  memberInPut.setAttribute('value', `${memberName.textContent}`)
+  memberName.style.display = 'none';
+  //toggel class list
+  editBtnContainer.classList.toggle('display-none');
+
+
+}
+
+function cancelMemberEditing(event) {
+  const target = event.target
+
+  const currentMemberLi = target.closest('li');
+  const memberInPut = currentMemberLi.querySelector('input');
+  const memberName = currentMemberLi.querySelector('span');
+  const saveNameBtnContainer = currentMemberLi.querySelector('.edit-member-btn-container');
+  const editBtnContainer = currentMemberLi.querySelector('.btn-container');
+
+  memberInPut.style.display = 'none';
+  memberInPut.value = `${memberName.textContent}`;
+
+  memberName.style.display = 'block';
+  saveNameBtnContainer.style.display = 'none';
+  editBtnContainer.classList.toggle('display-none');
+}
+
+function saveMemberEditing(event) {
+  const target = event.target
+
+  const currentMemberLi = target.closest('li');
+  const memberInPut = currentMemberLi.querySelector('input');
+  const memberName = currentMemberLi.querySelector('span');
+  const saveNameBtnContainer = currentMemberLi.querySelector('.edit-member-btn-container');
+  const editBtnContainer = currentMemberLi.querySelector('.btn-container');
+
+  let currentMember = appData.members.find((member) => {
+    return member === memberName.textContent
+  });
+  console.info(currentMember);
+
+  memberInPut.style.display = 'none';
+  memberName.textContent = `${memberInPut.value}`;
+
+  memberName.style.display = 'block';
+  saveNameBtnContainer.style.display = 'none';
+  editBtnContainer.classList.toggle('display-none');
+
+  /*
+   appData.members[index] = target.value;
+
+
+   const index = appData.members.indexOf(currentList);
+   console.info(index);
+   */
+}
+
+function DeleteMember(event) {
+  const target = event.target;
+  const membersList = document.querySelector('.members-list');
+  const currentMemberLi = target.closest('li');
+  const memberName = currentMemberLi.querySelector('span').textContent
+
+  membersList.removeChild(currentMemberLi);
+
+  let currentMember = appData.members.find((member) => {
+    return member === memberName
+  });
+  const index = appData.members.indexOf(currentMember);
+
+  appData.members.splice(index, 1);
+
+}
+
+function craeteMember(memberData) {
+
+  function handelMemberName(obj) {
 
     if (obj !== undefined) {
-      listName.innerHTML = obj.title;
+      memberName.textContent = memberData.name;
 
     }
     else {
-      listName.innerHTML = "brand new card";
-    }
-  }
 
+      const membersInput = document.querySelector('.add-new-member > input');
 
-  function handelCards(obj) {
+      if (membersInput.value !== '') {
+        memberName.textContent = membersInput.value;
 
-    if (obj !== undefined) {
-
-      let tasks = list.tasks;
-      for (task of tasks) {
-        //create card wraper and appand to dad ul
-        const cardWraper = createElement('li', ['assignment'], listUl);
-        cardWraper.tabIndex = '0';
-
-
-        //create edit btn and appand to dad ul
-        const editBtn = createElement('button', ['card-edit-btn', 'btn', 'btn-info', 'btn-xs'], cardWraper);
-        editBtn.textContent = 'Edit card';
-        editBtn.addEventListener("click", toggelModal);
-
-        //create interactive task description
-        const cardDiscription = createElement('p', ['card-description', 'p-no-margins'], cardWraper);
-        cardDiscription.textContent = task.text;
-
-        //loop the member
-
-        membersMaker();
-
-        function getInishials(str) {
-
-          const strArr = str.split(' ');
-          const twoWordArr = [];
-          for (const smallStr of strArr) {
-            const letter = smallStr[0].toUpperCase();
-            console.info(letter);
-
-            console.log(letter);
-            twoWordArr.push(letter);
-          }
-          return twoWordArr.join('');
-        }
-
-        function membersMaker() {
-          if (task.members.length > 0) {
-
-            const cardFooter = createElement('div', ['assignment-footer'], cardWraper);
-
-            for (let member of task.members) {
-              const userOnTask = createElement('span', ['user-icon', 'label', 'label-primary'], cardFooter);
-              userOnTask.innerHTML = getInishials(member);
-            }
-          }
-        }
+        let temMember = {name: `${membersInput.value}`};
+        appData.members.push(temMember);
+        console.info(appData.members);
       }
+      else {
+        membersList.removeChild(memberInPlace);
+      }
+
+      membersInput.value = '';
     }
-  }
-
-
-  /*create the list*/
-
-  const listsContainer = document.querySelector('main > div > div');
-
-  //create the list add it to dad and give class
-  const newList = createElement('section', ['panel panel-default'], listsContainer);
-
-  //create the list head add it to dad and give class
-  const listHead = createElement('div', ['panel-heading, task-name-wraper'], newList);
-
-  //create the title head name
-  const listName = createElement('h3', ['panel-title'], listHead);
-
-  handelListName(list);
-  listName.tabIndex = '0';
-
-  listName.addEventListener("click", changeListName);
-  listName.addEventListener('keydown', changeListName);
-
-  //create input with currnet name as value and add events listiner
-  const titelInPut = createElement('input', ['list-name-input'], listHead);
-
-  titelInPut.setAttribute("value", `${listName.innerHTML}`);
-  titelInPut.style.display = "none";
-
-  titelInPut.addEventListener("blur", saveListName);
-  titelInPut.addEventListener('keydown', saveListName);
-
-  //create the editBtn container
-  const editBtnContainer = createElement('div', ['btn-group'], listHead);
-
-  editBtnContainer.innerHTML = `
-              <button type="button" class="delete-btn btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <span class="smaller-glyphicon glyphicon glyphicon-triangle-bottom"></span>
-            </button>
-            <ul class="ul-drop-down dropdown-menu">
-              <li><a href="#"><span class="padding-right glyphicon glyphicon-trash
-                "></span>Delete</a></li>
-            </ul>
-`;
-  //target btn and add events
-  const editBtn = editBtnContainer.querySelector('button');
-  const deleteLi = editBtnContainer.querySelector('li');
-
-  addEventListeners([editBtn], ['click', 'blur', 'keydown'], handelDropDown);
-  addEventListeners([deleteLi], ['mousedown'], deleteList);
-
-  //create the list content add it to dad and give class
-  const overFlowMask = createElement('div', ['over-flow-mask'], newList);
-
-  //create the list ul
-  const listUl = createElement('ul', ['flex-box'], overFlowMask);
-  handelCards(list);
-  //create the list footer add it to dad and give class
-  const listFooter = createElement('div', ['panel-footer', 'list-footer'], newList);
-  listFooter.tabIndex = '0';
-
-  //create the add card btn in footer and give class and onclick
-  const addCardBtn = createElement('span', ['panel-footer-btn'], listFooter);
-
-  addCardBtn.innerHTML = `
-<span class="padding-right glyphicon glyphicon-plus"></span>
-            Add New Card
-`;
-  listFooter.addEventListener("click", addNewCard);
-
-}
-
-
-function handelListMaking(data) {
-
-  if (data !== undefined) {
-    const lists = data.board;
-
-    for (let list of lists) {
-      console.info(list);
-      createList(list);
-    }
-  }
-
-  else {
-    createList();
-  }
-}
-
-function MembersHandeler() {
-  console.info(event.target);
-  craeteMember();
-}
-
-//make a function similar to the input h3 save and change name
-
-
-function craeteMember() {
-
-  function changeMember(event) {
-
-    const currentTarget = event.target;
-    const currentMemberLi = currentTarget.closest('li');
-
-
-    const memberInPut = currentMemberLi.querySelector('input');
-    const memberName = currentMemberLi.querySelector('span');
-    console.info(memberInPut);
-
-    memberInPut.style.display='block';
-    memberInPut.setAttribute( 'value', `${memberName.textContent}` )
-    memberName.style.display='none';
-
-
+//save new member to appdata obj
 
 
   }
@@ -399,46 +515,214 @@ function craeteMember() {
 
   const member = createElement('li', ['list-group-item'], membersList);
 
-  const memberInPlace = membersList.insertBefore(member, ListInput );
+  const memberInPlace = membersList.insertBefore(member, ListInput);
 
 
   const memberName = createElement('span', undefined, memberInPlace);
-  memberName.textContent ='namle'
-  const memberNameInput = createElement('input', ['list-name-input','member-name-input'], memberInPlace);
+  handelMemberName(memberData);
+  const memberNameInput = createElement('input', ['list-name-input', 'member-name-input'], memberInPlace);
 
   const btnContainer = createElement('div', ['btn-container'], memberInPlace);
-  btnContainer.innerHTML =` 
+  btnContainer.innerHTML = ` 
           <button class="edit-member btn btn-info btn-xs">Edit</button>
           <button class="delete-member btn btn-danger btn-xs">Delete</button>
 `
   const deleltMemberBtn = btnContainer.querySelector('.delete-member');
   const editMemberBtn = btnContainer.querySelector('.edit-member');
 
-
-  deleltMemberBtn.addEventListener("click", craeteMember);
+  const EditMemberBtnContainer = createElement('div', ['edit-member-btn-container'], memberInPlace);
+  EditMemberBtnContainer.innerHTML = `
+          <button class="cancel-member-btn btn btn-default btn-xs">Cancel</button>
+          <button class="save-member-btn btn btn-success btn-xs">save</button>
+`
+  deleltMemberBtn.addEventListener("click", DeleteMember);
   editMemberBtn.addEventListener("click", changeMember);
 
+  const cancelMemberBtn = EditMemberBtnContainer.querySelector('.cancel-member-btn');
+  const saveMemberBtn = EditMemberBtnContainer.querySelector('.save-member-btn');
+
+  cancelMemberBtn.addEventListener("click", cancelMemberEditing);
+  saveMemberBtn.addEventListener("click", saveMemberEditing);
+
 }
 
-craeteMember();
+function handelMemeberMaking(data) {
+
+  if (data !== undefined) {
+    const membersData = data.members;
+
+    const main = document.querySelector('main');
+
+    main.innerHTML = `<div class="members">
+    <h2 class="display-block capitalize">taskboard members</h2>
+    <p>counter:<span></span></p>
+    <ul class="members-list list-group">
+
+      <li class="add-new-member list-group-item">
+        <input class="display-block list-name-input" type="text" placeholder="Add new member" maxlength="26">
+        <button type="button" onclick="handelMemeberMaking()" class="btn btn-primary">add</button>
+      </li>
+    </ul>
+  </div>`
+
+    for (let memberData of membersData) {
+      craeteMember(memberData);
+    }
+  }
+  else {
+    craeteMember();
+  }
+}
 
 
-//get JSON
-function reqListener(event) {
-  const target = event.target
+//get JSON event listiner
 
+function isAllDataIsReady() {
+
+  if (appData.lists.length && appData.members.length) {
+    return true;
+  }
+  else {
+    return false
+  }
+}
+
+function reqListenerData(event) {
+
+  const target = event.target;
   let data = JSON.parse(target.responseText);
 
-  handelListMaking(data);
+  appData.lists = data.board;
 
-  //board is array of obj
+  if (isAllDataIsReady()) {
+    handelPagesByHash();
+  }
+}
+
+function reqListenerMember(event) {
+
+  const target = event.target
+  let DataMembers = JSON.parse(target.responseText);
+
+  appData.members = DataMembers.members;
+  if (isAllDataIsReady()) {
+    handelPagesByHash();
+  }
+}
+
+/*
+ how to ganerate the ui only after 2 json files finished loading?
+
+
+ this genetarte the ui -  handelPagesByHash();
+ the functions that call to it are the reqListener
+
+ how do i knew it finished?
+ ready states = 4
+ function checkReadyState(){
+
+ if(target.readystate === 4 ){
+
+ }
+
+ }
+ if()
+ */
+
+//ganarate page
+
+function getBoardData() {
+  const oReq = new XMLHttpRequest();
+  oReq.addEventListener("load", reqListenerData);
+  oReq.open("GET", "assets/board.json");
+  oReq.send();
+}
+
+function getMemberData() {
+  const memberReq = new XMLHttpRequest();
+
+  memberReq.addEventListener("load", reqListenerMember);
+  memberReq.open("GET", "assets/members.json");
+  memberReq.send();
 
 }
 
+//change the selcted li in nav bar by hash
+function highlightSelectedPage(page) {
 
-const oReq = new XMLHttpRequest();
-oReq.addEventListener("load", reqListener);
-oReq.open("GET", "assets/board.json");
-oReq.send();
+  const navbar = document.querySelector('.navbar-nav');
+  const memberLi = navbar.querySelector('.member');
+  const boardLi = navbar.querySelector('.board');
+
+  if (page === 'member') {
+    memberLi.classList.add('active');
+    boardLi.classList.remove('active');
+  }
+  if (page === 'board') {
+    memberLi.classList.remove('active');
+    boardLi.classList.add('active');
+  }
+}
+
+//ganerate page by hash in href
+function handelPagesByHash() {
+  const location = window.location.hash;
+
+  if (location === undefined || location !== '#Members' && location !== '#Board') {
+    window.location.hash = '#Board';
+
+  }
+  if (location === '#Members') {
+    handelMemeberMaking(appData);
+    highlightSelectedPage('member');
+  }
+  if (location === '#Board') {
+
+    handelListMaking(appData.lists);
+    highlightSelectedPage('board');
+
+  }
+}
+
+//ganerate page
+//handelPagesByHash();
+function initial() {
+  window.addEventListener('hashchange', handelPagesByHash);
+  getBoardData();
+  getMemberData();
+}
+
+/*
+
+ 2. First thing that should run is: `getBoardData` (instead of `checkUrlHash`).
+ 3. When you get the board data, save it (e.g. `data.board`) under `appData.lists`
+ 4. Then, call `checkUrlHash` (instead of building the lists)
+ 5. When loading a page based on the hash, don’t call the `getBoardData`, just build the damn lists
+ 6. When building the lists, use `appData.lists` (edited)
+
+ {
+ "members": [
+ {
+ "name": "Alex Ilyaev"
+ },
+ {
+ "name": "Dima Vishnevetsky"
+ },
+ {
+ "name": "Gil Tayar"
+ },
+ {
+ "name": "yael kfir"
+ },
+ {
+ "name": "adi siman-tov"
+ }
+ ]
+ }
 
 
+
+
+
+ */
+initial();
