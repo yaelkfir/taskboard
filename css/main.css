@@ -418,7 +418,7 @@ bottom :-20px;
 .check-box-list{
   border: 1px solid #cccccc;
   padding: 15px;
-  width: 60%;
+  width: 100%;
   max-height: 120px;
   overflow-y: auto;
   border-radius: 5px;
@@ -443,8 +443,8 @@ bottom :-20px;
   height: 100%;
   width: 100%;
 }
-.width-90{
-  width: 60%;
+.width-panel{
+  width:450px;
 }
 /*members-page*/
 .members-list{
@@ -514,6 +514,32 @@ bottom :-20px;
   align-items: center;
 }
 
+.btn-group-right{
+  position: absolute;
+  right: 15px;
+  bottom: 15px;
+  display: inline-block;
+}
+
+.btn-group-left{
+  position: absolute;
+  left: 15px;
+  bottom: 15px;
+  display: inline-block;
+}
+
+.light-box-footer{
+  height: 65px;
+}
+.width-100{
+  width:100%;
+}
+
+.txtarea{
+  max-height: 220px;
+  height: 100px;
+  max-width:388px;
+}
 /* Responsive */
 
 @media (min-width: 1200px) {
@@ -566,5 +592,9 @@ bottom :-20px;
   .navbar-nav {
     float: left;
     margin: 0;
+  }
+
+  .modal-dialog{
+    margin: 30px auto;
   }
 }

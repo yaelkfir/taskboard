@@ -28,64 +28,47 @@
 </header>
 <div class="light-box">
   <div class="full-height-width " tabindex="-1" role="dialog">
-    <div class="width-90 modal-dialog" role="document">
+    <div class="width-panel modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <button type="button" class="close-modal close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <button type="button" onclick="handelModal()" class="close-modal close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           <h4 class="capitalize modal-title">edit card</h4>
         </div>
         <div class="light-box-body modal-body">
           <div class="container">
-            <form>
+            <form class=".form-group">
               <div class="form-group row">
-                <label for="exampleTextarea" class="capitalize col-sm-2 col-form-label">card text</label>
-                <div class="col-sm-10">
-                  <textarea class="form-control" id="exampleTextarea" rows="3" style="margin-top: 0px; margin-bottom: 0px; height: 78px;"></textarea>
+                <label for="exampleTextarea" class="width-100 capitalize col-sm-2 col-form-label">card text</label>
+                <div class="width-100 col-sm-10">
+                  <textarea class="txtarea form-control" id="exampleTextarea"  rows="3" style="margin-top: 0px; margin-bottom: 0px; height: 78px;"></textarea>
                 </div>
               </div>
               <div class="form-group row">
-                <label for="exampleSelect1" class="capitalize col-sm-2 col-form-label">move to</label>
-                <div class="col-sm-10">
-                  <select class="form-control" id="exampleSelect1">
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
+                <label for="exampleSelect1" class="width-100 capitalize col-sm-2 col-form-label">move to</label>
+                <div class="width-100 col-sm-10">
+                  <select class="move-to-list form-control" id="exampleSelect1">
+
                   </select>
                 </div>
               </div>
               <div class="form-group row">
-                <label class="capitalize col-sm-2">members</label>
-                <div class="col-sm-10">
+                <label class="width-100 capitalize col-sm-2">members</label>
+                <div class="width-100 col-sm-10">
                   <div class="check-box-list form-check">
-                    <label class="display-block form-check-label">
-                      <input class="form-check-input" type="checkbox" checked > Check me out
-                    </label>
-                    <label class="display-block form-check-label">
-                      <input class="form-check-input" type="checkbox" checked > Check me out
-                    </label>
-                    <label class="display-block form-check-label">
-                      <input class="form-check-input" type="checkbox" checked > Check me out
-                    </label>
-                    <label class="display-block form-check-label">
-                      <input class="form-check-input" type="checkbox" checked > Check me out
-                    </label>
-                    <label class="display-block form-check-label">
-                      <input class="form-check-input" type="checkbox" checked > Check me out
-                    </label>
                   </div>
-                </div>
-              </div>
-              <div class="form-group row">
-                <div class="offset-sm-2 col-sm-10">
-                  <button type='action' class="capitalize delete-card btn btn-primary">delete card</button>
                 </div>
               </div>
             </form>
           </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="close-modal btn btn-default" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
+        <div class="light-box-footer modal-footer">
+          <button type='action' class="btn-group-left capitalize delete-card btn btn-primary">delete card</button>
+          <div class="btn-group-right">
+            <button type="button" onclick="handelModal()" class="close-modal btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
+            </div>
+          </div>
         </div>
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->

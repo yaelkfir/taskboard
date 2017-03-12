@@ -5,10 +5,10 @@ const appData = {
   lists: [],
   members: []
 };
-
 const ENTER = 13;
 
-/*----general functions ----*/
+
+/** general functions */
 function addEventListeners(elements, arrayOfEvents, eventListener) {
   for (const element of elements) {
     for (const event of arrayOfEvents) {
@@ -53,8 +53,9 @@ function toggleVisibility(element) {
     element.style.display = 'block';
   }
 }
-/*----end of general functions ----*/
 
+
+/** list functions */
 //create list
 function handelListMaking(data) {
 
@@ -107,7 +108,7 @@ function handelListMaking(data) {
           //create edit btn and appand to dad ul
           const editBtn = createElement('button', ['card-edit-btn', 'btn', 'btn-info', 'btn-xs'], cardWraper);
           editBtn.textContent = 'Edit card';
-          editBtn.addEventListener("click", toggelModal);
+          editBtn.addEventListener("click", handelModal);
 
           //create interactive task description
           const cardDiscription = createElement('p', ['card-description', 'p-no-margins'], cardWraper);
@@ -222,7 +223,6 @@ function handelListMaking(data) {
     }
   }
 }
-
 
 //list btns and input
 function deleteList(event) {
@@ -339,7 +339,7 @@ function addNewCard(event) {
   const cardWraper = createElement('li', ['assignment'], currentList);
   const editBtn = createElement('button', ['card-edit-btn', 'btn', 'btn-info', 'btn-xs'], cardWraper);
   editBtn.textContent = 'Edit card';
-  editBtn.addEventListener("click", toggelModal);
+  editBtn.addEventListener("click", handelModal);
   const cardDiscription = createElement('p', ['card-description', 'p-no-margins'], cardWraper);
   cardDiscription.textContent = 'new card';
   const parntScroler = parantSection.querySelector('.over-flow-mask');
@@ -359,42 +359,90 @@ function addNewCard(event) {
   }
 }
 
-//edit card modal window
-function toggelModal(event) {
 
+/** modal functions */
+function handelModal(event) {
+
+  function getModalContent(target) {
+
+    const selectedPanel = target.closest('.panel');
+    const selectedcard = target.closest('.assignment');
+    const cardDiscription = selectedcard.querySelector('p').textContent;
+    const listTitle = selectedPanel.querySelector('h3').textContent;
+
+    //find card members in appData
+    const selectedListData = appData.lists.find((list) => {
+      return list.title === listTitle
+    })
+    const selectedCardData = selectedListData.tasks.find((task) => {
+      return task.text === cardDiscription;
+    });
+
+    //add members
+    appData.members.forEach((member) => {
+      let memberLabel = createElement('label', ['display-block', 'form-check-label'], membersList);
+      memberLabel.innerHTML = `<input class="form-check-input" type="checkbox"> ${member.name}`;
+
+      selectedCardData.members.forEach((memberData)=>{
+        //check them
+        if(memberData === member.name){
+          memberLabel.innerHTML = `<input class="form-check-input" type="checkbox" checked> ${member.name}`;
+        }
+      });
+    });
+
+    //fill move-to options
+    appData.lists.forEach((list) => {
+      let option = createElement('option', undefined, moveToList);
+      option.textContent = list.title;
+
+      if (list.title === listTitle) {
+        option.selected = true;
+
+        //add card description
+        let card = list.tasks.find((task) => {
+          return task.text === cardDiscription;
+        });
+        textArea.innerHTML = card.text;
+      }
+    });
+  }
+
+  function removeModalContent() {
+
+    const options = moveToList.querySelectorAll('option');
+    options.forEach((option) => {
+      moveToList.removeChild(option)
+    });
+    const members = membersList.querySelectorAll('label');
+    members.forEach((member)=>{
+      membersList.removeChild(member)
+    })
+  }
+
+  //get modal dom elements
   const cardModal = document.querySelector('.light-box');
-  let target = event.target;
+  const moveToList = cardModal.querySelector('.move-to-list');
+  const textArea = cardModal.querySelector('textarea');
+  const membersList = cardModal.querySelector('.check-box-list');
 
-  const currentlist = target.closest('.panel');
-  const currentcard = target.closest('.assignment');
-
-  console.info(target);
-  console.info(currentlist);
-  console.info(currentcard);
-
-
+  //close modal
   if (cardModal.style.display === 'flex') {
     cardModal.style.display = 'none';
+    removeModalContent();
   }
+
+  //open modal
   else {
     cardModal.style.display = 'flex';
-    const closecardModalBtns = cardModal.querySelectorAll('.close-modal');
-
-    for (const closecardModalBtn of closecardModalBtns) {
-      closecardModalBtn.addEventListener("click", toggelModal);
-    }
+    const target = event.target;
+    getModalContent(target);
   }
 }
 
 
-//member functions
-/*
- handelmember btns
- if event.target.classlist.includs('edit-member'){
-
- }
- */
-
+/** member functions */
+//open edit name mode
 function changeMember(event) {
 
   const currentTarget = event.target;
@@ -415,6 +463,7 @@ function changeMember(event) {
 
 }
 
+//close edit name mode
 function cancelMemberEditing(event) {
   const target = event.target
 
@@ -432,6 +481,7 @@ function cancelMemberEditing(event) {
   editBtnContainer.classList.toggle('display-none');
 }
 
+//save changed name
 function saveMemberEditing(event) {
   const target = event.target
 
@@ -441,17 +491,25 @@ function saveMemberEditing(event) {
   const saveNameBtnContainer = currentMemberLi.querySelector('.edit-member-btn-container');
   const editBtnContainer = currentMemberLi.querySelector('.btn-container');
 
+  //find the currnt member in appdata
   let currentMember = appData.members.find((member) => {
-    return member === memberName.textContent
+    return member.name === memberName.textContent;
   });
-  console.info(currentMember);
 
+  //find the currnt member index in appdata
+  const index = appData.members.indexOf(currentMember);
+
+  //change the currnt member name in dom
   memberInPut.style.display = 'none';
   memberName.textContent = `${memberInPut.value}`;
 
   memberName.style.display = 'block';
   saveNameBtnContainer.style.display = 'none';
   editBtnContainer.classList.toggle('display-none');
+
+  //changed the name in appdata
+  currentMember.name = `${memberInPut.value}`;
+
 
   /*
    appData.members[index] = target.value;
@@ -462,6 +520,7 @@ function saveMemberEditing(event) {
    */
 }
 
+//add/remove members
 function DeleteMember(event) {
   const target = event.target;
   const membersList = document.querySelector('.members-list');
@@ -471,19 +530,22 @@ function DeleteMember(event) {
   membersList.removeChild(currentMemberLi);
 
   let currentMember = appData.members.find((member) => {
-    return member === memberName
+    return member.name === memberName;
   });
+
+  console.info(currentMember);
   const index = appData.members.indexOf(currentMember);
+  console.info(index);
 
   appData.members.splice(index, 1);
 
 }
 
-function craeteMember(memberData) {
+function createMember(memberData) {
 
-  function handelMemberName(obj) {
+  function handelMemberName(memberData) {
 
-    if (obj !== undefined) {
+    if (memberData !== undefined) {
       memberName.textContent = memberData.name;
 
     }
@@ -504,9 +566,6 @@ function craeteMember(memberData) {
 
       membersInput.value = '';
     }
-//save new member to appdata obj
-
-
   }
 
   const membersList = document.querySelector('.members-list');
@@ -546,7 +605,7 @@ function craeteMember(memberData) {
 
 }
 
-function handelMemeberMaking(data) {
+function handelMemberMaking(data) {
 
   if (data !== undefined) {
     const membersData = data.members;
@@ -560,23 +619,25 @@ function handelMemeberMaking(data) {
 
       <li class="add-new-member list-group-item">
         <input class="display-block list-name-input" type="text" placeholder="Add new member" maxlength="26">
-        <button type="button" onclick="handelMemeberMaking()" class="btn btn-primary">add</button>
+        <button type="button" onclick="handelMemberMaking()" class="btn btn-primary">add</button>
       </li>
     </ul>
   </div>`
 
     for (let memberData of membersData) {
-      craeteMember(memberData);
+      createMember(memberData);
     }
   }
   else {
-    craeteMember();
+    createMember();
   }
 }
 
+console.info(appData);
 
-//get JSON event listiner
 
+/** loading page functions */
+//json loading checker
 function isAllDataIsReady() {
 
   if (appData.lists.length && appData.members.length) {
@@ -587,6 +648,7 @@ function isAllDataIsReady() {
   }
 }
 
+// JSON event listiner
 function reqListenerData(event) {
 
   const target = event.target;
@@ -595,10 +657,9 @@ function reqListenerData(event) {
   appData.lists = data.board;
 
   if (isAllDataIsReady()) {
-    handelPagesByHash();
+    handelPages();
   }
 }
-
 function reqListenerMember(event) {
 
   const target = event.target
@@ -606,38 +667,17 @@ function reqListenerMember(event) {
 
   appData.members = DataMembers.members;
   if (isAllDataIsReady()) {
-    handelPagesByHash();
+    handelPages();
   }
 }
 
-/*
- how to ganerate the ui only after 2 json files finished loading?
-
-
- this genetarte the ui -  handelPagesByHash();
- the functions that call to it are the reqListener
-
- how do i knew it finished?
- ready states = 4
- function checkReadyState(){
-
- if(target.readystate === 4 ){
-
- }
-
- }
- if()
- */
-
-//ganarate page
-
+//get the json data of pages
 function getBoardData() {
   const oReq = new XMLHttpRequest();
   oReq.addEventListener("load", reqListenerData);
   oReq.open("GET", "assets/board.json");
   oReq.send();
 }
-
 function getMemberData() {
   const memberReq = new XMLHttpRequest();
 
@@ -648,7 +688,7 @@ function getMemberData() {
 }
 
 //change the selcted li in nav bar by hash
-function highlightSelectedPage(page) {
+function selectedNavLink(page) {
 
   const navbar = document.querySelector('.navbar-nav');
   const memberLi = navbar.querySelector('.member');
@@ -664,8 +704,8 @@ function highlightSelectedPage(page) {
   }
 }
 
-//ganerate page by hash in href
-function handelPagesByHash() {
+//generate page by hash
+function handelPages() {
   const location = window.location.hash;
 
   if (location === undefined || location !== '#Members' && location !== '#Board') {
@@ -673,21 +713,20 @@ function handelPagesByHash() {
 
   }
   if (location === '#Members') {
-    handelMemeberMaking(appData);
-    highlightSelectedPage('member');
+    handelMemberMaking(appData);
+    selectedNavLink('member');
   }
   if (location === '#Board') {
 
     handelListMaking(appData.lists);
-    highlightSelectedPage('board');
+    selectedNavLink('board');
 
   }
 }
 
-//ganerate page
-//handelPagesByHash();
-function initial() {
-  window.addEventListener('hashchange', handelPagesByHash);
+//run json data on arrival to page
+function onArrival() {
+  window.addEventListener('hashchange', handelPages);
   getBoardData();
   getMemberData();
 }
@@ -725,4 +764,4 @@ function initial() {
 
 
  */
-initial();
+onArrival();
