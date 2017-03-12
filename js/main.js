@@ -365,7 +365,7 @@ function addNewCard(event) {
 
 function handelModal(event) {
 
-
+//chang!
 
   function getModalContent(target) {
 
