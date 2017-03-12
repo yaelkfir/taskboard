@@ -1,6 +1,8 @@
 /**
  * Created by yaelo on 2/27/17.
  */
+
+
 const appData = {
   lists: [],
   members: []
@@ -103,6 +105,7 @@ function handelListMaking(data) {
           //create card wraper and appand to dad ul
           const cardWraper = createElement('li', ['assignment'], listUl);
           cardWraper.tabIndex = '0';
+          cardWraper.setAttribute('data-id',`${task.id}`);
 
 
           //create edit btn and appand to dad ul
@@ -150,6 +153,15 @@ function handelListMaking(data) {
       }
     }
 
+    function handelListId(obj){
+
+      if (obj !== undefined) {
+        newList.setAttribute('data-id', list.id);
+      }
+      else {
+        //uuid.v1()
+        newList.setAttribute('data-id', uuid.v1());      }
+    }
 
     /*create the list*/
 
@@ -161,7 +173,7 @@ function handelListMaking(data) {
 
     const listName = createElement('h3', ['panel-title'], listHead);
 
-
+    handelListId(list);
     handelListName(list);
     listName.tabIndex = '0';
 
@@ -229,20 +241,20 @@ function deleteList(event) {
 
   //target the list
   const target = event.target;
-  const list = target.closest('section');
+  const listSection = target.closest('.panel');
+  const listSectionId =listSection.getAttribute('data-id');
   const listsContainer = document.querySelector('.list-container');
-  const listTitle = list.querySelector('h3').textContent;
+  const listTitle = listSection.querySelector('h3').textContent;
 
   const r = confirm(`Deleting ${listTitle} list. Are you sure?`);
   if (r === true) {
-    listsContainer.removeChild(list);
+    listsContainer.removeChild(listSection);
 
-    //remove from appData
+    //remove list from appData
     let currentList = appData.lists.find((list) => {
-      return list.title === listTitle
+      return list.id === listSectionId;
     });
     const index = appData.lists.indexOf(currentList);
-
     appData.lists.splice(index, 1);
   }
 }
@@ -344,9 +356,15 @@ function addNewCard(event) {
   cardDiscription.textContent = 'new card';
   const parntScroler = parantSection.querySelector('.over-flow-mask');
 
-  scrollTo(parntScroler, parntScroler.scrollHeight, 300);
 
+  scrollTo(parntScroler, parntScroler.scrollHeight, 300);
+  const cardId = uuid.v1();
+
+  cardWraper.setAttribute('data-id',`${cardId}`);
+
+  console.info(cardId);
   let tempCard = {
+    id: `${cardId}`,
     text: `${cardDiscription.textContent }`,
     members: []
   };
@@ -359,18 +377,16 @@ function addNewCard(event) {
   }
 }
 
-
 /** modal functions */
 
 
 function handelModal(event) {
 
-//chang!
-
   function getModalContent(target) {
 
     const selectedPanel = target.closest('.panel');
     const selectedcard = target.closest('.assignment');
+    const selectedCardId = selectedcard['data-id'];
     const cardDiscription = selectedcard.querySelector('p').textContent;
     const listTitle = selectedPanel.querySelector('h3').textContent;
     const saveChangesBtn = cardModal.querySelector('.save-changes');
@@ -381,7 +397,7 @@ function handelModal(event) {
       return list.title === listTitle
     });
     const selectedCardData = selectedListData.tasks.find((task) => {
-      return task.text === cardDiscription;
+      return task.id === selectedCardId;
     });
 
       //add members
@@ -407,7 +423,7 @@ function handelModal(event) {
 
         //add card description
         let card = list.tasks.find((task) => {
-          return task.text === cardDiscription;
+          return task.id === selectedCardId;
         });
         textArea.innerHTML = card.text;
       }
@@ -422,15 +438,16 @@ function handelModal(event) {
       const selectedListData = appData.lists.find((list) => {
         return list.title === listTitle
       });
+      console.info(selectedListData);
       const selectedCardData = selectedListData.tasks.find((task) => {
         return task.text === cardDiscription;
       });
-
+      console.info(selectedCardData);
       if(listTitle !== optionSelected){
         //find selected list
         const moveCardTo = appData.lists.find((list) => {
           return list.title === optionSelected;
-          console.info(moveCardTo);
+          console.info('new list',moveCardTo);
         });
       }
 
