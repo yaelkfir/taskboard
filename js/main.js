@@ -361,7 +361,11 @@ function addNewCard(event) {
 
 
 /** modal functions */
+
+
 function handelModal(event) {
+
+
 
   function getModalContent(target) {
 
@@ -369,29 +373,31 @@ function handelModal(event) {
     const selectedcard = target.closest('.assignment');
     const cardDiscription = selectedcard.querySelector('p').textContent;
     const listTitle = selectedPanel.querySelector('h3').textContent;
+    const saveChangesBtn = cardModal.querySelector('.save-changes');
+    saveChangesBtn.addEventListener("click", saveCardChanges);
 
-    //find card members in appData
+    //find card in appData
     const selectedListData = appData.lists.find((list) => {
       return list.title === listTitle
-    })
+    });
     const selectedCardData = selectedListData.tasks.find((task) => {
       return task.text === cardDiscription;
     });
 
-    //add members
-    appData.members.forEach((member) => {
+      //add members
+      appData.members.forEach((member) => {
       let memberLabel = createElement('label', ['display-block', 'form-check-label'], membersList);
       memberLabel.innerHTML = `<input class="form-check-input" type="checkbox"> ${member.name}`;
 
+      //check correct members
       selectedCardData.members.forEach((memberData)=>{
-        //check them
         if(memberData === member.name){
           memberLabel.innerHTML = `<input class="form-check-input" type="checkbox" checked> ${member.name}`;
         }
       });
     });
 
-    //fill move-to options
+    //fill move-to options and text area content
     appData.lists.forEach((list) => {
       let option = createElement('option', undefined, moveToList);
       option.textContent = list.title;
@@ -406,6 +412,29 @@ function handelModal(event) {
         textArea.innerHTML = card.text;
       }
     });
+
+    function saveCardChanges(){
+
+      //get selected move to option
+      const optionSelected =  moveToList.querySelector('option:checked').text;
+      console.info('options', optionSelected);
+      //get the card
+      const selectedListData = appData.lists.find((list) => {
+        return list.title === listTitle
+      });
+      const selectedCardData = selectedListData.tasks.find((task) => {
+        return task.text === cardDiscription;
+      });
+
+      if(listTitle !== optionSelected){
+        //find selected list
+        const moveCardTo = appData.lists.find((list) => {
+          return list.title === optionSelected;
+          console.info(moveCardTo);
+        });
+      }
+
+    }
   }
 
   function removeModalContent() {
@@ -430,6 +459,8 @@ function handelModal(event) {
   if (cardModal.style.display === 'flex') {
     cardModal.style.display = 'none';
     removeModalContent();
+
+
   }
 
   //open modal
@@ -437,6 +468,7 @@ function handelModal(event) {
     cardModal.style.display = 'flex';
     const target = event.target;
     getModalContent(target);
+
   }
 }
 
