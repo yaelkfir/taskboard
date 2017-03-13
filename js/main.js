@@ -8,6 +8,61 @@ const appData = {
   members: []
 };
 const ENTER = 13;
+/**
+ * udating appdata
+ */
+//members
+function removeMemberFromAppData(memberDataId) {
+  let currentMember = appData.members.find((member) => {
+    return member.id === memberDataId;
+  });
+
+  const index = appData.members.indexOf(currentMember);
+  appData.members.splice(index, 1);
+
+}
+
+function saveMemberEditingInAppData(memberDataId, memberInPut) {
+  let currentMember = appData.members.find((member) => {
+    return member.id === memberDataId;
+  });
+  //find the currnt member index in appdata
+  const index = appData.members.indexOf(currentMember);
+
+  currentMember.name = `${memberInPut.value}`;
+}
+
+function addMemberObjToAppData(memberDataId, membersInput) {
+  let temMember = {
+    id: `${memberDataId}`,
+    name: `${membersInput.value}`
+  };
+  appData.members.push(temMember);
+  console.info(appData.members);
+}
+
+
+//lists
+function addNewListToAppData(newList, listName) {
+  const listDataId = newList.getAttribute('data-id');
+  //add to appData
+  let temList = {
+    id: listDataId,
+    title: `${listName.textContent}`,
+    tasks: []
+  }
+  appData.lists.push(temList);
+
+}
+
+function removeListFromAppData(listSectionId) {
+  let currentList = appData.lists.find((list) => {
+    return list.id === listSectionId;
+  });
+
+  const index = appData.lists.indexOf(currentList);
+  appData.lists.splice(index, 1);
+}
 
 
 /** general functions */
@@ -61,7 +116,6 @@ function toggleVisibility(element) {
 //create list
 function handelListMaking(data) {
 
-
   if (data !== undefined) {
     const lists = data;
     const main = document.querySelector('main');
@@ -94,7 +148,6 @@ function handelListMaking(data) {
       }
     }
 
-    //cards
     function handelCards(obj) {
 
       if (obj !== undefined) {
@@ -105,7 +158,7 @@ function handelListMaking(data) {
           //create card wraper and appand to dad ul
           const cardWraper = createElement('li', ['assignment'], listUl);
           cardWraper.tabIndex = '0';
-          cardWraper.setAttribute('data-id',`${task.id}`);
+          cardWraper.setAttribute('data-id', `${task.id}`);
 
 
           //create edit btn and appand to dad ul
@@ -153,14 +206,14 @@ function handelListMaking(data) {
       }
     }
 
-    function handelListId(obj){
+    function handelListId(obj) {
 
       if (obj !== undefined) {
         newList.setAttribute('data-id', list.id);
       }
       else {
-        //uuid.v1()
-        newList.setAttribute('data-id', uuid.v1());      }
+        newList.setAttribute('data-id', uuid());
+      }
     }
 
     /*create the list*/
@@ -225,13 +278,7 @@ function handelListMaking(data) {
     listFooter.addEventListener("click", addNewCard);
 
     if (list === undefined) {
-
-      //add to appData
-      let temList = {
-        title: `${listName.textContent}`,
-        tasks: []
-      }
-      appData.lists.push(temList);
+      addNewListToAppData(newList, listName);
     }
   }
 }
@@ -242,20 +289,16 @@ function deleteList(event) {
   //target the list
   const target = event.target;
   const listSection = target.closest('.panel');
-  const listSectionId =listSection.getAttribute('data-id');
+  const listSectionId = listSection.getAttribute('data-id');
   const listsContainer = document.querySelector('.list-container');
   const listTitle = listSection.querySelector('h3').textContent;
 
   const r = confirm(`Deleting ${listTitle} list. Are you sure?`);
   if (r === true) {
     listsContainer.removeChild(listSection);
-
     //remove list from appData
-    let currentList = appData.lists.find((list) => {
-      return list.id === listSectionId;
-    });
-    const index = appData.lists.indexOf(currentList);
-    appData.lists.splice(index, 1);
+    removeListFromAppData(listSectionId);
+    console.info(appData);
   }
 }
 
@@ -358,9 +401,9 @@ function addNewCard(event) {
 
 
   scrollTo(parntScroler, parntScroler.scrollHeight, 300);
-  const cardId = uuid.v1();
+  const cardId = uuid();
 
-  cardWraper.setAttribute('data-id',`${cardId}`);
+  cardWraper.setAttribute('data-id', `${cardId}`);
 
   console.info(cardId);
   let tempCard = {
@@ -386,28 +429,37 @@ function handelModal(event) {
 
     const selectedPanel = target.closest('.panel');
     const selectedcard = target.closest('.assignment');
-    const selectedCardId = selectedcard['data-id'];
+    const selectedListId = selectedPanel.getAttribute('data-id');
+    const selectedCardId = selectedcard.getAttribute('data-id');
     const cardDiscription = selectedcard.querySelector('p').textContent;
     const listTitle = selectedPanel.querySelector('h3').textContent;
     const saveChangesBtn = cardModal.querySelector('.save-changes');
+
     saveChangesBtn.addEventListener("click", saveCardChanges);
 
     //find card in appData
     const selectedListData = appData.lists.find((list) => {
-      return list.title === listTitle
+
+      return list.id === selectedListId
     });
+    console.info('list',selectedListData.tasks);
+    console.info('card id', selectedCardId);
+
     const selectedCardData = selectedListData.tasks.find((task) => {
+
       return task.id === selectedCardId;
     });
 
-      //add members
-      appData.members.forEach((member) => {
+    //add members
+    appData.members.forEach((member) => {
+
       let memberLabel = createElement('label', ['display-block', 'form-check-label'], membersList);
       memberLabel.innerHTML = `<input class="form-check-input" type="checkbox"> ${member.name}`;
 
       //check correct members
-      selectedCardData.members.forEach((memberData)=>{
-        if(memberData === member.name){
+      selectedCardData.members.forEach((memberData) => {
+
+        if (memberData === member.name) {
           memberLabel.innerHTML = `<input class="form-check-input" type="checkbox" checked> ${member.name}`;
         }
       });
@@ -416,9 +468,10 @@ function handelModal(event) {
     //fill move-to options and text area content
     appData.lists.forEach((list) => {
       let option = createElement('option', undefined, moveToList);
+      option.setAttribute('data-id', list.id);
       option.textContent = list.title;
 
-      if (list.title === listTitle) {
+      if (list.id === selectedListId) {
         option.selected = true;
 
         //add card description
@@ -429,27 +482,23 @@ function handelModal(event) {
       }
     });
 
-    function saveCardChanges(){
+    function saveCardChanges() {
 
       //get selected move to option
-      const optionSelected =  moveToList.querySelector('option:checked').text;
+      const optionSelected = moveToList.querySelector('option:checked').text;
       console.info('options', optionSelected);
+
       //get the card
       const selectedListData = appData.lists.find((list) => {
-        return list.title === listTitle
+        return list.id === selectedListId;
       });
-      console.info(selectedListData);
+
       const selectedCardData = selectedListData.tasks.find((task) => {
-        return task.text === cardDiscription;
+        return task.id === selectedCardId;
       });
-      console.info(selectedCardData);
-      if(listTitle !== optionSelected){
-        //find selected list
-        const moveCardTo = appData.lists.find((list) => {
-          return list.title === optionSelected;
-          console.info('new list',moveCardTo);
-        });
-      }
+
+      console.info('list data',selectedListData);
+      console.info('card data',selectedCardData);
 
     }
   }
@@ -461,7 +510,7 @@ function handelModal(event) {
       moveToList.removeChild(option)
     });
     const members = membersList.querySelectorAll('label');
-    members.forEach((member)=>{
+    members.forEach((member) => {
       membersList.removeChild(member)
     })
   }
@@ -509,7 +558,6 @@ function changeMember(event) {
   //toggel class list
   editBtnContainer.classList.toggle('display-none');
 
-
 }
 
 //close edit name mode
@@ -534,19 +582,12 @@ function cancelMemberEditing(event) {
 function saveMemberEditing(event) {
   const target = event.target
 
-  const currentMemberLi = target.closest('li');
+  const currentMemberLi = target.closest('.list-group-item');
+  const memberDataId = currentMemberLi.getAttribute('data-id');
   const memberInPut = currentMemberLi.querySelector('input');
   const memberName = currentMemberLi.querySelector('span');
   const saveNameBtnContainer = currentMemberLi.querySelector('.edit-member-btn-container');
   const editBtnContainer = currentMemberLi.querySelector('.btn-container');
-
-  //find the currnt member in appdata
-  let currentMember = appData.members.find((member) => {
-    return member.name === memberName.textContent;
-  });
-
-  //find the currnt member index in appdata
-  const index = appData.members.indexOf(currentMember);
 
   //change the currnt member name in dom
   memberInPut.style.display = 'none';
@@ -556,39 +597,22 @@ function saveMemberEditing(event) {
   saveNameBtnContainer.style.display = 'none';
   editBtnContainer.classList.toggle('display-none');
 
-  //changed the name in appdata
-  currentMember.name = `${memberInPut.value}`;
-
-
-  /*
-   appData.members[index] = target.value;
-
-
-   const index = appData.members.indexOf(currentList);
-   console.info(index);
-   */
+  saveMemberEditingInAppData(memberDataId, memberInPut);
 }
 
 //add/remove members
 function DeleteMember(event) {
   const target = event.target;
   const membersList = document.querySelector('.members-list');
-  const currentMemberLi = target.closest('li');
-  const memberName = currentMemberLi.querySelector('span').textContent
+  const currentMemberLi = target.closest('.list-group-item');
+  const memberDataId = currentMemberLi.getAttribute('data-id');
+  console.info(currentMemberLi);
+  console.info(memberDataId);
 
   membersList.removeChild(currentMemberLi);
-
-  let currentMember = appData.members.find((member) => {
-    return member.name === memberName;
-  });
-
-  console.info(currentMember);
-  const index = appData.members.indexOf(currentMember);
-  console.info(index);
-
-  appData.members.splice(index, 1);
-
+  removeMemberFromAppData(memberDataId);
 }
+
 
 function createMember(memberData) {
 
@@ -601,14 +625,15 @@ function createMember(memberData) {
     else {
 
       const membersInput = document.querySelector('.add-new-member > input');
+      const memberDataId = member.getAttribute('data-id');
 
       if (membersInput.value !== '') {
+
         memberName.textContent = membersInput.value;
 
-        let temMember = {name: `${membersInput.value}`};
-        appData.members.push(temMember);
-        console.info(appData.members);
+        addMemberObjToAppData(memberDataId, membersInput);
       }
+
       else {
         membersList.removeChild(memberInPlace);
       }
@@ -617,17 +642,28 @@ function createMember(memberData) {
     }
   }
 
+  function handelMemberId(memberData) {
+    if (memberData !== undefined) {
+      member.setAttribute('data-id', memberData.id);
+    }
+    else {
+      member.setAttribute('data-id', uuid());
+
+    }
+  }
+
   const membersList = document.querySelector('.members-list');
   const ListInput = document.querySelector('.add-new-member');
 
 
   const member = createElement('li', ['list-group-item'], membersList);
-
+  handelMemberId(memberData);
   const memberInPlace = membersList.insertBefore(member, ListInput);
 
 
   const memberName = createElement('span', undefined, memberInPlace);
   handelMemberName(memberData);
+
   const memberNameInput = createElement('input', ['list-name-input', 'member-name-input'], memberInPlace);
 
   const btnContainer = createElement('div', ['btn-container'], memberInPlace);
