@@ -38,9 +38,7 @@ function addMemberObjToAppData(memberDataId, membersInput) {
     name: `${membersInput.value}`
   };
   appData.members.push(temMember);
-  console.info(appData.members);
 }
-
 
 //lists
 function addNewListToAppData(newList, listName) {
@@ -63,6 +61,24 @@ function removeListFromAppData(listSectionId) {
   const index = appData.lists.indexOf(currentList);
   appData.lists.splice(index, 1);
 }
+
+//cards
+function addCardToListInAppData(cardId,cardDiscription,parentSectionId){
+
+  let tempCard = {
+    id: `${cardId}`,
+    text: `${cardDiscription.textContent }`,
+    members: []
+  };
+
+  for (let list of appData.lists) {
+    if (list.id === parentSectionId) {
+
+      list.tasks.push(tempCard);
+    }
+  }
+}
+
 
 
 /** general functions */
@@ -110,6 +126,7 @@ function toggleVisibility(element) {
     element.style.display = 'block';
   }
 }
+
 
 
 /** list functions */
@@ -298,7 +315,6 @@ function deleteList(event) {
     listsContainer.removeChild(listSection);
     //remove list from appData
     removeListFromAppData(listSectionId);
-    console.info(appData);
   }
 }
 
@@ -389,7 +405,7 @@ function addNewCard(event) {
   targetElement.blur();
 
   const parantSection = targetElement.closest('.panel-default');
-  const listTitle = parantSection.querySelector('h3');
+  const parentSectionId = parantSection.getAttribute('data-id');
   const currentList = parantSection.querySelector('.flex-box');
   const cardWraper = createElement('li', ['assignment'], currentList);
   const editBtn = createElement('button', ['card-edit-btn', 'btn', 'btn-info', 'btn-xs'], cardWraper);
@@ -402,26 +418,12 @@ function addNewCard(event) {
 
   scrollTo(parntScroler, parntScroler.scrollHeight, 300);
   const cardId = uuid();
-
   cardWraper.setAttribute('data-id', `${cardId}`);
+  addCardToListInAppData(cardId,cardDiscription,parentSectionId);
 
-  console.info(cardId);
-  let tempCard = {
-    id: `${cardId}`,
-    text: `${cardDiscription.textContent }`,
-    members: []
-  };
-
-  for (let list of appData.lists) {
-    if (list.title === listTitle.textContent) {
-
-      list.tasks.push(tempCard);
-    }
-  }
 }
 
 /** modal functions */
-
 
 function handelModal(event) {
 
@@ -606,8 +608,6 @@ function DeleteMember(event) {
   const membersList = document.querySelector('.members-list');
   const currentMemberLi = target.closest('.list-group-item');
   const memberDataId = currentMemberLi.getAttribute('data-id');
-  console.info(currentMemberLi);
-  console.info(memberDataId);
 
   membersList.removeChild(currentMemberLi);
   removeMemberFromAppData(memberDataId);
