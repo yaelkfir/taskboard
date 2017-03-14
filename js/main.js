@@ -327,17 +327,22 @@ function handelListMaking(data) {
   }
 }
 
-function membersMaker(members, card) {
-  if (members.length > 0) {
+function membersMaker(membersId, card) {
+  if (membersId.length > 0) {
 //add data-id to member span
-
+console.info(membersId);
     const cardFooter = createElement('div', ['assignment-footer'], card);
 
-    for (let member of members) {
+    for (let memberId of membersId) {
 
       const userOnTask = createElement('span', ['user-icon', 'label', 'label-primary'], cardFooter);
-      userOnTask.setAttribute('title', `${member}`);
-      userOnTask.innerHTML = getInishials(member);
+     appData.members.forEach((member)=>{
+       if(member.id === memberId){
+         let memberName = member.name
+         userOnTask.setAttribute('title', `${memberName}`);
+         userOnTask.innerHTML = getInishials(memberName);
+       }
+     });
     }
   }
 }
@@ -508,11 +513,11 @@ function getModalContent(target,cardModal) {
 
     let memberLabel = createElement('label', ['display-block', 'form-check-label'], membersList);
     memberLabel.innerHTML = `<input class="form-check-input" type="checkbox">${member.name}`;
-
+    memberLabel.setAttribute('data-id',`${member.id}`)
     //check correct members
     selectedCardData.members.forEach((memberData) => {
 
-      if (memberData === member.name) {
+      if (memberData === member.id) {
         memberLabel.innerHTML = `<input class="form-check-input" type="checkbox" checked>${member.name}`;
       }
     });
@@ -579,7 +584,10 @@ function saveCardChanges(event) {
 
   checkboxes.forEach((checkbox) => {
     if (checkbox.checked === true) {
-      temMembersArr.push(checkbox.closest('label').textContent);
+
+      let lableId = checkbox.closest('label').getAttribute('data-id');
+      console.info(lableId);
+      temMembersArr.push(lableId);
     }
   });
 
