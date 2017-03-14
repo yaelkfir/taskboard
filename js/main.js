@@ -11,15 +11,37 @@ const ENTER = 13;
 /**
  * udating appdata
  */
+
 //members
-function removeMemberFromAppData(memberDataId) {
+function removeMemberFromAppDataMembers(memberDataId) {
   let currentMember = appData.members.find((member) => {
     return member.id === memberDataId;
   });
 
   const index = appData.members.indexOf(currentMember);
   appData.members.splice(index, 1);
+  removeMemberFromAppDataCards(memberDataId);
+}
 
+function removeMemberFromAppDataCards(memberDataId) {
+  let toRemoveMember ='';
+  // currentMember = id + name
+  //find the tasks that have this id in members
+  appData.lists.forEach((list)=>{
+
+    list.tasks.forEach((task)=>{
+      const members = task.members;
+
+      members.forEach((member)=>{
+        if(memberDataId === member){
+          toRemoveMember = member;
+          const index = members.indexOf(toRemoveMember);
+          console.info(index);
+          members.splice(index, 1);
+        }
+      });
+    });
+  });
 }
 
 function saveMemberEditingInAppData(memberDataId, memberInPut) {
@@ -39,6 +61,7 @@ function addMemberObjToAppData(memberDataId, membersInput) {
   };
   appData.members.push(temMember);
 }
+
 
 //lists
 function addNewListToAppData(newList, listName) {
@@ -71,6 +94,7 @@ function changeListNameInAppData(listDataId, target) {
 
   appData.lists[index].title = target.value;
 }
+
 
 //cards
 function addCardToListInAppData(cardId, cardDiscription, parentSectionId) {
@@ -126,6 +150,7 @@ function removeCardInAppData(selectedListId, selectedCardId){
 
 
 /** general functions */
+
 function addEventListeners(elements, arrayOfEvents, eventListener) {
   for (const element of elements) {
     for (const event of arrayOfEvents) {
@@ -180,6 +205,7 @@ function getInishials(str) {
 
 
 /** list functions */
+
 //create list
 function handelListMaking(data) {
 
@@ -330,7 +356,6 @@ function handelListMaking(data) {
 function membersMaker(membersId, card) {
   if (membersId.length > 0) {
 //add data-id to member span
-console.info(membersId);
     const cardFooter = createElement('div', ['assignment-footer'], card);
 
     for (let memberId of membersId) {
@@ -346,6 +371,7 @@ console.info(membersId);
     }
   }
 }
+
 
 //list btns and input
 function deleteList(event) {
@@ -469,6 +495,7 @@ function addNewCard(event) {
 
 
 /** modal functions */
+
 function removeModalContent(cardModal) {
   const moveToList = cardModal.querySelector('.move-to-list');
   const membersList = cardModal.querySelector('.check-box-list');
@@ -511,14 +538,14 @@ function getModalContent(target,cardModal) {
   //add members
   appData.members.forEach((member) => {
 
-    let memberLabel = createElement('label', ['display-block', 'form-check-label'], membersList);
-    memberLabel.innerHTML = `<input class="form-check-input" type="checkbox">${member.name}`;
+    let memberLabel = createElement('label', ['margin-top-5' ,'display-block', 'form-check-label'], membersList);
+    memberLabel.innerHTML = `<input class="margin-right-5 form-check-input" type="checkbox">${member.name}`;
     memberLabel.setAttribute('data-id',`${member.id}`)
     //check correct members
     selectedCardData.members.forEach((memberData) => {
 
       if (memberData === member.id) {
-        memberLabel.innerHTML = `<input class="form-check-input" type="checkbox" checked>${member.name}`;
+        memberLabel.innerHTML = `<input class="margin-right-5 form-check-input" type="checkbox" checked>${member.name}`;
       }
     });
   });
@@ -656,7 +683,9 @@ function toggleModal(event) {
 }
 
 
+
 /** member functions */
+
 //open edit name mode
 function changeMember(event) {
 
@@ -728,7 +757,7 @@ function DeleteMember(event) {
   const memberDataId = currentMemberLi.getAttribute('data-id');
 
   membersList.removeChild(currentMemberLi);
-  removeMemberFromAppData(memberDataId);
+  removeMemberFromAppDataMembers(memberDataId);
 }
 
 function createMember(memberData) {
@@ -816,7 +845,6 @@ function handelMemberMaking(data) {
 
     main.innerHTML = `<div class="members">
     <h2 class="display-block capitalize">taskboard members</h2>
-    <p>counter:<span></span></p>
     <ul class="members-list list-group">
 
       <li class="add-new-member list-group-item">
@@ -834,6 +862,10 @@ function handelMemberMaking(data) {
     createMember();
   }
 }
+
+
+
+
 
 console.info(appData);
 
