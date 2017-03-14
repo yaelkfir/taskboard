@@ -3,6 +3,9 @@
 html {
   box-sizing: border-box;
 }
+*{
+  box-sizing: border-box;
+}
 
 input, button {
   border: none;
@@ -62,8 +65,6 @@ header .logo {
 .panel-default {
   width: 300px;
   margin-right: 20px;
-  flex: 0 0;
-  flex-basis: 300px;
   min-height: 200px;
   height: 100%;
   max-height: calc(100% - 50px);

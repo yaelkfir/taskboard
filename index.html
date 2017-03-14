@@ -31,7 +31,7 @@
     <div class="width-panel modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <button type="button" onclick="handelModal()" class="close-modal close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <button type="button" onclick="toggleModal()" class="close-modal close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           <h4 class="capitalize modal-title">edit card</h4>
         </div>
         <div class="light-box-body modal-body">
@@ -62,10 +62,10 @@
           </div>
         </div>
         <div class="light-box-footer modal-footer">
-          <button type='action' class="btn-group-left capitalize delete-card btn btn-primary">delete card</button>
+          <button type='action' class="btn-group-left capitalize delete-card btn btn-primary" onclick="deleteCard()">delete card</button>
           <div class="btn-group-right">
-            <button type="button" onclick="handelModal()" class="close-modal btn btn-default" data-dismiss="modal">Close</button>
-            <button type="button" class="save-changes btn btn-primary">Save changes</button>
+            <button type="button" onclick="toggleModal()" class="close-modal btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="save-changes btn btn-primary" onclick="saveCardChanges()">Save changes</button>
           </div>
             </div>
           </div>

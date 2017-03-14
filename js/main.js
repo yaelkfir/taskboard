@@ -62,8 +62,18 @@ function removeListFromAppData(listSectionId) {
   appData.lists.splice(index, 1);
 }
 
+function changeListNameInAppData(listDataId, target) {
+  let currentList = appData.lists.find((list) => {
+    return list.id === listDataId
+  });
+
+  const index = appData.lists.indexOf(currentList);
+
+  appData.lists[index].title = target.value;
+}
+
 //cards
-function addCardToListInAppData(cardId,cardDiscription,parentSectionId){
+function addCardToListInAppData(cardId, cardDiscription, parentSectionId) {
 
   let tempCard = {
     id: `${cardId}`,
@@ -80,6 +90,40 @@ function addCardToListInAppData(cardId,cardDiscription,parentSectionId){
 }
 
 
+//modal
+function saveModalChanges(selectedListId, selectedCardId, temMembersArr, cardTxt){
+  //get the card from app data
+  const selectedListData = appData.lists.find((list) => {
+    return list.id === selectedListId;
+  });
+  //get the list from app data
+
+  const selectedCardData = selectedListData.tasks.find((task) => {
+    return task.id === selectedCardId;
+  });
+
+  selectedCardData.text = cardTxt.textContent;
+  selectedCardData.members = temMembersArr;
+}
+
+function removeCardInAppData(selectedListId, selectedCardId){
+
+  //find the list in appdata
+  const selectedListData = appData.lists.find((list) => {
+    return list.id === selectedListId;
+  });
+
+  const selectedCardData = selectedListData.tasks.find((task) => {
+    return task.id === selectedCardId;
+  });
+
+  const index = selectedListData.tasks.indexOf(selectedCardData);
+  selectedListData.tasks.splice(index, 1);
+
+}
+
+
+
 
 /** general functions */
 function addEventListeners(elements, arrayOfEvents, eventListener) {
@@ -91,15 +135,8 @@ function addEventListeners(elements, arrayOfEvents, eventListener) {
 }
 
 function createElement(tagName, className, parent) {
+
   const element = document.createElement(tagName);
-  /*
-
-   a.forEach(function(element) {
-   console.log(element);
-   });
-   const cardDiscription = createElement('p', ['card-description', 'p-no-margins'], cardWraper);
-
-   */
 
   if (className !== undefined) {
     let classesStr = '';
@@ -127,6 +164,19 @@ function toggleVisibility(element) {
   }
 }
 
+function getInishials(str) {
+
+  const strArr = str.split(' ');
+  const twoWordArr = [];
+  for (const smallStr of strArr) {
+    const letter = smallStr[0].toUpperCase();
+
+    twoWordArr.push(letter);
+  }
+  return twoWordArr.join('');
+}
+
+
 
 
 /** list functions */
@@ -140,8 +190,12 @@ function handelListMaking(data) {
     main.innerHTML = `<div class="boards board-flex">
     <div class="list-container board-flex height-100">
     </div>
-    <button type="button" class="btn add-list-btn-primary  btn-primary margin-right" onclick="handelListMaking()">add new list..</button>
-  </div>`;
+      <div>
+       <button type="button" class="btn add-list-btn-primary  btn-primary margin-right" onclick="handelListMaking()">
+          add new list..
+       </button>
+      </div>
+    </div>`;
 
     lists.forEach((list) => {
       createList(list)
@@ -181,7 +235,7 @@ function handelListMaking(data) {
           //create edit btn and appand to dad ul
           const editBtn = createElement('button', ['card-edit-btn', 'btn', 'btn-info', 'btn-xs'], cardWraper);
           editBtn.textContent = 'Edit card';
-          editBtn.addEventListener("click", handelModal);
+          editBtn.addEventListener("click", toggleModal);
 
           //create interactive task description
           const cardDiscription = createElement('p', ['card-description', 'p-no-margins'], cardWraper);
@@ -190,34 +244,7 @@ function handelListMaking(data) {
 
           //loop the member
 
-          membersMaker();
-
-          function getInishials(str) {
-
-            const strArr = str.split(' ');
-            const twoWordArr = [];
-            for (const smallStr of strArr) {
-              const letter = smallStr[0].toUpperCase();
-
-              twoWordArr.push(letter);
-            }
-            return twoWordArr.join('');
-          }
-
-          function membersMaker() {
-            if (task.members.length > 0) {
-
-              const cardFooter = createElement('div', ['assignment-footer'], cardWraper);
-
-              for (let member of task.members) {
-
-                const userOnTask = createElement('span', ['user-icon', 'label', 'label-primary'], cardFooter);
-                userOnTask.setAttribute('title', `${member}`);
-                userOnTask.innerHTML = getInishials(member);
-              }
-            }
-          }
-
+          membersMaker(task.members, cardWraper);
 
         }
       }
@@ -300,6 +327,21 @@ function handelListMaking(data) {
   }
 }
 
+function membersMaker(members, card) {
+  if (members.length > 0) {
+//add data-id to member span
+    
+    const cardFooter = createElement('div', ['assignment-footer'], card);
+
+    for (let member of members) {
+
+      const userOnTask = createElement('span', ['user-icon', 'label', 'label-primary'], cardFooter);
+      userOnTask.setAttribute('title', `${member}`);
+      userOnTask.innerHTML = getInishials(member);
+    }
+  }
+}
+
 //list btns and input
 function deleteList(event) {
 
@@ -364,17 +406,14 @@ function saveListName(event) {
 
     const target = event.target;
     const container = target.closest('.task-name-wraper');
+    const list = target.closest('.panel');
+    const listDataId = list.getAttribute('data-id');
     console.info(container);
     const title = container.querySelector('h3');
 
 
     //Change in appData
-    let currentList = appData.lists.find((list) => {
-      return list.title === title.textContent
-    });
-    console.info(currentList);
-    const index = appData.lists.indexOf(currentList);
-    console.info(index);
+    changeListNameInAppData(listDataId, target);
 
     if (target.style.display === 'block') {
       //target the h3
@@ -382,7 +421,6 @@ function saveListName(event) {
       title.style.display = 'block';
       target.style.display = 'none';
     }
-    appData.lists[index].title = target.value;
   }
 }
 
@@ -410,7 +448,7 @@ function addNewCard(event) {
   const cardWraper = createElement('li', ['assignment'], currentList);
   const editBtn = createElement('button', ['card-edit-btn', 'btn', 'btn-info', 'btn-xs'], cardWraper);
   editBtn.textContent = 'Edit card';
-  editBtn.addEventListener("click", handelModal);
+  editBtn.addEventListener("click", toggleModal);
   const cardDiscription = createElement('p', ['card-description', 'p-no-margins'], cardWraper);
   cardDiscription.textContent = 'new card';
   const parntScroler = parantSection.querySelector('.over-flow-mask');
@@ -419,124 +457,193 @@ function addNewCard(event) {
   scrollTo(parntScroler, parntScroler.scrollHeight, 300);
   const cardId = uuid();
   cardWraper.setAttribute('data-id', `${cardId}`);
-  addCardToListInAppData(cardId,cardDiscription,parentSectionId);
+  addCardToListInAppData(cardId, cardDiscription, parentSectionId);
 
 }
 
+
+
 /** modal functions */
+function removeModalContent(cardModal) {
+  const moveToList = cardModal.querySelector('.move-to-list');
+  const membersList = cardModal.querySelector('.check-box-list');
 
-function handelModal(event) {
+  const options = moveToList.querySelectorAll('option');
+  options.forEach((option) => {
+    moveToList.removeChild(option)
+  });
+  const members = membersList.querySelectorAll('label');
+  members.forEach((member) => {
+    membersList.removeChild(member)
+  });
+}
 
-  function getModalContent(target) {
+function getModalContent(target,cardModal) {
 
-    const selectedPanel = target.closest('.panel');
-    const selectedcard = target.closest('.assignment');
-    const selectedListId = selectedPanel.getAttribute('data-id');
-    const selectedCardId = selectedcard.getAttribute('data-id');
-    const cardDiscription = selectedcard.querySelector('p').textContent;
-    const listTitle = selectedPanel.querySelector('h3').textContent;
-    const saveChangesBtn = cardModal.querySelector('.save-changes');
-
-    saveChangesBtn.addEventListener("click", saveCardChanges);
-
-    //find card in appData
-    const selectedListData = appData.lists.find((list) => {
-
-      return list.id === selectedListId
-    });
-    console.info('list',selectedListData.tasks);
-    console.info('card id', selectedCardId);
-
-    const selectedCardData = selectedListData.tasks.find((task) => {
-
-      return task.id === selectedCardId;
-    });
-
-    //add members
-    appData.members.forEach((member) => {
-
-      let memberLabel = createElement('label', ['display-block', 'form-check-label'], membersList);
-      memberLabel.innerHTML = `<input class="form-check-input" type="checkbox"> ${member.name}`;
-
-      //check correct members
-      selectedCardData.members.forEach((memberData) => {
-
-        if (memberData === member.name) {
-          memberLabel.innerHTML = `<input class="form-check-input" type="checkbox" checked> ${member.name}`;
-        }
-      });
-    });
-
-    //fill move-to options and text area content
-    appData.lists.forEach((list) => {
-      let option = createElement('option', undefined, moveToList);
-      option.setAttribute('data-id', list.id);
-      option.textContent = list.title;
-
-      if (list.id === selectedListId) {
-        option.selected = true;
-
-        //add card description
-        let card = list.tasks.find((task) => {
-          return task.id === selectedCardId;
-        });
-        textArea.innerHTML = card.text;
-      }
-    });
-
-    function saveCardChanges() {
-
-      //get selected move to option
-      const optionSelected = moveToList.querySelector('option:checked').text;
-      console.info('options', optionSelected);
-
-      //get the card
-      const selectedListData = appData.lists.find((list) => {
-        return list.id === selectedListId;
-      });
-
-      const selectedCardData = selectedListData.tasks.find((task) => {
-        return task.id === selectedCardId;
-      });
-
-      console.info('list data',selectedListData);
-      console.info('card data',selectedCardData);
-
-    }
-  }
-
-  function removeModalContent() {
-
-    const options = moveToList.querySelectorAll('option');
-    options.forEach((option) => {
-      moveToList.removeChild(option)
-    });
-    const members = membersList.querySelectorAll('label');
-    members.forEach((member) => {
-      membersList.removeChild(member)
-    })
-  }
-
-  //get modal dom elements
-  const cardModal = document.querySelector('.light-box');
   const moveToList = cardModal.querySelector('.move-to-list');
   const textArea = cardModal.querySelector('textarea');
   const membersList = cardModal.querySelector('.check-box-list');
 
+  const selectedPanel = target.closest('.panel');
+  const selectedcard = target.closest('.assignment');
+  const selectedListId = selectedPanel.getAttribute('data-id');
+  const selectedCardId = selectedcard.getAttribute('data-id');
+  const cardModalId = cardModal.setAttribute('data-card', selectedCardId);
+  const listModalId = cardModal.setAttribute('data-list', selectedListId);
+
+  //find card in appData
+  const selectedListData = appData.lists.find((list) => {
+
+    return list.id === selectedListId
+  });
+
+
+  const selectedCardData = selectedListData.tasks.find((task) => {
+
+    return task.id === selectedCardId;
+  });
+
+  //add members
+  appData.members.forEach((member) => {
+
+    let memberLabel = createElement('label', ['display-block', 'form-check-label'], membersList);
+    memberLabel.innerHTML = `<input class="form-check-input" type="checkbox">${member.name}`;
+
+    //check correct members
+    selectedCardData.members.forEach((memberData) => {
+
+      if (memberData === member.name) {
+        memberLabel.innerHTML = `<input class="form-check-input" type="checkbox" checked>${member.name}`;
+      }
+    });
+  });
+
+  //fill move-to options and text area content
+  appData.lists.forEach((list) => {
+    let option = createElement('option', undefined, moveToList);
+    option.setAttribute('data-id', list.id);
+    option.textContent = list.title;
+
+    if (list.id === selectedListId) {
+      option.selected = true;
+
+      //add card description
+      let card = list.tasks.find((task) => {
+        return task.id === selectedCardId;
+      });
+      textArea.value = card.text;
+    }
+  });
+}
+
+function saveCardChanges(event) {
+
+  //get selected move to option
+  const cardModal = document.querySelector('.light-box');
+  const textArea = document.querySelector('textarea');
+  const moveToList = cardModal.querySelector('.move-to-list');
+  const membersList = cardModal.querySelector('.check-box-list');
+  const selectedCardId = cardModal.getAttribute('data-card');
+  const selectedListId = cardModal.getAttribute('data-list');
+  const lists = document.querySelectorAll('.panel');
+
+  let selectedList ='';
+
+  lists.forEach((list)=>{
+  const temListId = list.getAttribute('data-id');
+  if(temListId === selectedListId){
+    selectedList = list;
+  }
+});
+
+  const listCards = selectedList.querySelectorAll('.assignment');
+
+  let selectedcard ='';
+
+  listCards.forEach((card)=>{
+    const temCardId = card.getAttribute('data-id');
+    if(temCardId === selectedCardId){
+      selectedcard = card;
+    }
+  });
+
+
+  //change discreption
+  const cardTxt = selectedcard.querySelector('p');
+  cardTxt.textContent = textArea.value;
+
+  //change members
+  const checkboxes = cardModal.querySelectorAll("input[type='checkbox']");
+
+  const temMembersArr = [];
+
+  checkboxes.forEach((checkbox) => {
+    if (checkbox.checked === true) {
+      temMembersArr.push(checkbox.closest('label').textContent);
+    }
+  });
+
+  const selectedCardFooter = selectedcard.querySelector('.assignment-footer');
+
+  if(selectedCardFooter){
+    selectedcard.removeChild(selectedCardFooter);
+  }
+
+  membersMaker(temMembersArr, selectedcard);
+  cardModal.style.display = 'none';
+  saveModalChanges(selectedListId, selectedCardId, temMembersArr,cardTxt);
+  removeModalContent(cardModal);
+}
+
+function deleteCard(event){
+  const cardModal = document.querySelector('.light-box');
+  const selectedCardId = cardModal.getAttribute('data-card');
+  const selectedListId = cardModal.getAttribute('data-list');
+
+  const lists = document.querySelectorAll('.panel');
+
+  let selectedList ='';
+
+  lists.forEach((list)=>{
+    const temListId = list.getAttribute('data-id');
+    if(temListId === selectedListId){
+      selectedList = list;
+    }
+  });
+
+  const listCards = selectedList.querySelectorAll('.assignment');
+
+  let selectedcard ='';
+
+  listCards.forEach((card)=>{
+    const temCardId = card.getAttribute('data-id');
+    if(temCardId === selectedCardId){
+      selectedcard = card;
+    }
+  });
+
+  const selectedListUl = selectedList.querySelector('.flex-box');
+
+  selectedListUl.removeChild(selectedcard);
+  removeCardInAppData(selectedListId, selectedCardId);
+  cardModal.style.display = 'none';
+  removeModalContent(cardModal);
+
+}
+
+function toggleModal(event) {
+  //get modal dom element
+  const cardModal = document.querySelector('.light-box');
   //close modal
   if (cardModal.style.display === 'flex') {
     cardModal.style.display = 'none';
-    removeModalContent();
-
-
+    removeModalContent(cardModal);
   }
-
   //open modal
   else {
     cardModal.style.display = 'flex';
     const target = event.target;
-    getModalContent(target);
-
+    getModalContent(target, cardModal);
   }
 }
 
@@ -600,6 +707,9 @@ function saveMemberEditing(event) {
   editBtnContainer.classList.toggle('display-none');
 
   saveMemberEditingInAppData(memberDataId, memberInPut);
+  function changeMemberNameInTasks() {
+
+  }
 }
 
 //add/remove members
@@ -612,7 +722,6 @@ function DeleteMember(event) {
   membersList.removeChild(currentMemberLi);
   removeMemberFromAppData(memberDataId);
 }
-
 
 function createMember(memberData) {
 
@@ -719,7 +828,6 @@ function handelMemberMaking(data) {
 }
 
 console.info(appData);
-
 
 /** loading page functions */
 //json loading checker
