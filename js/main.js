@@ -330,7 +330,7 @@ function handelListMaking(data) {
 function membersMaker(members, card) {
   if (members.length > 0) {
 //add data-id to member span
-    
+
     const cardFooter = createElement('div', ['assignment-footer'], card);
 
     for (let member of members) {
