@@ -102,6 +102,7 @@ header .logo {
   width: 100%;
   top: 50px;
   bottom: 50px;
+  padding: 15px 0 5px 0px;
   overflow-y: auto;
   overflow-x: hidden;
   max-height: calc(100vh - 215px);
@@ -160,11 +161,14 @@ header .logo {
 
 .add-list-btn-primary {
   width: 250px;
+  padding-left: 15px;
   height: 50px;
   font-size: 16px;
-  background-color: #3F51B5;
-  border: 0px;
-  font-weight: 500;
+  background-color: #d8edf8;
+  border: 1px solid #bbe8f2;
+  border-bottom: 3px solid #BBE8F2;
+  color: #2e6f90;
+  font-weight: 600;
   letter-spacing: 0.8px;
   text-transform: capitalize;
 }
@@ -179,13 +183,13 @@ header .logo {
 .list-name-input {
   background-color: #FFFFFF;
   padding-left: 10px;
-  width: 290px;
+  width: 180px;
   font-size: larger;
   border-radius: 3px;
   border: 1px solid #ddd;
   display: none;
   color: #000;
-  margin-right: 10px;
+  margin-right: 13px;
 
 }
 .list-name-input:focus{
@@ -222,12 +226,12 @@ header .logo {
 }
 
 .delete-btn{
-  display: flex;
   padding: 0;
   width: 30px;
   color: #1e2757;
   border: 1px solid #d8d8d8;
   justify-content: center;
+  flex-direction: row;
   background-color: #ffffff;
   height: 30px;
 }
@@ -239,8 +243,6 @@ header .logo {
   justify-content: center;
   align-items: center;
   text-transform: uppercase;
-  background-color:rgba(51, 66, 183, 0.07);
-  color: #607D8B ;
 }
 
 .assignment-footer{
@@ -290,8 +292,11 @@ header .logo {
 .task-name-wraper{
   color: #FFFFFF;
   background-color: #f5f5f5;
-  padding: 10px 15px 10px 15px;
+  padding: 10px 12px 10px 13px;
   display: flex;
+  justify-content: flex-start;
+  flex-direction: row;
+  align-items: center;
   position: relative;
   border-bottom: 1px solid #e7e7e7;
 }
@@ -327,10 +332,6 @@ bottom :-20px;
   width:100px;
   height: 20px;
   background-color: #3F51B5;
-}
-
-.flex-box:first-child{
-  margin-top: 10px;
 }
 
 .header-link-container{
@@ -381,7 +382,7 @@ bottom :-20px;
 }
 
 .margin-right {
-  margin: 0 30px 0 0px;
+  margin: 0 25px 0 0px;
 }
 
 .height-100 {

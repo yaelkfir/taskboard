@@ -24,19 +24,19 @@ function removeMemberFromAppDataMembers(memberDataId) {
 }
 
 function removeMemberFromAppDataCards(memberDataId) {
-  let toRemoveMember ='';
-  // currentMember = id + name
-  //find the tasks that have this id in members
-  appData.lists.forEach((list)=>{
+  let toRemoveMember = '';
+  // memberDataId = id
+  //find the tasks that have this id in its members
+  appData.lists.forEach((list) => {
 
-    list.tasks.forEach((task)=>{
+    list.tasks.forEach((task) => {
       const members = task.members;
 
-      members.forEach((member)=>{
-        if(memberDataId === member){
+      members.forEach((member) => {
+        if (memberDataId === member) {
           toRemoveMember = member;
           const index = members.indexOf(toRemoveMember);
-          console.info(index);
+
           members.splice(index, 1);
         }
       });
@@ -115,7 +115,7 @@ function addCardToListInAppData(cardId, cardDiscription, parentSectionId) {
 
 
 //modal
-function saveModalChanges(selectedListId, selectedCardId, temMembersArr, cardTxt){
+function saveModalChanges(selectedListId, selectedCardId, temMembersArr, cardTxt) {
   //get the card from app data
   const selectedListData = appData.lists.find((list) => {
     return list.id === selectedListId;
@@ -130,7 +130,7 @@ function saveModalChanges(selectedListId, selectedCardId, temMembersArr, cardTxt
   selectedCardData.members = temMembersArr;
 }
 
-function removeCardInAppData(selectedListId, selectedCardId){
+function removeCardInAppData(selectedListId, selectedCardId) {
 
   //find the list in appdata
   const selectedListData = appData.lists.find((list) => {
@@ -145,8 +145,6 @@ function removeCardInAppData(selectedListId, selectedCardId){
   selectedListData.tasks.splice(index, 1);
 
 }
-
-
 
 
 /** general functions */
@@ -174,7 +172,6 @@ function createElement(tagName, className, parent) {
 
   if (parent !== undefined) {
     parent.appendChild(element);
-
   }
 
   return element;
@@ -200,8 +197,6 @@ function getInishials(str) {
   }
   return twoWordArr.join('');
 }
-
-
 
 
 /** list functions */
@@ -361,13 +356,13 @@ function membersMaker(membersId, card) {
     for (let memberId of membersId) {
 
       const userOnTask = createElement('span', ['user-icon', 'label', 'label-primary'], cardFooter);
-     appData.members.forEach((member)=>{
-       if(member.id === memberId){
-         let memberName = member.name
-         userOnTask.setAttribute('title', `${memberName}`);
-         userOnTask.innerHTML = getInishials(memberName);
-       }
-     });
+      appData.members.forEach((member) => {
+        if (member.id === memberId) {
+          let memberName = member.name
+          userOnTask.setAttribute('title', `${memberName}`);
+          userOnTask.innerHTML = getInishials(memberName);
+        }
+      });
     }
   }
 }
@@ -439,7 +434,6 @@ function saveListName(event) {
     const container = target.closest('.task-name-wraper');
     const list = target.closest('.panel');
     const listDataId = list.getAttribute('data-id');
-    console.info(container);
     const title = container.querySelector('h3');
 
 
@@ -493,7 +487,6 @@ function addNewCard(event) {
 }
 
 
-
 /** modal functions */
 
 function removeModalContent(cardModal) {
@@ -510,7 +503,7 @@ function removeModalContent(cardModal) {
   });
 }
 
-function getModalContent(target,cardModal) {
+function getModalContent(target, cardModal) {
 
   const moveToList = cardModal.querySelector('.move-to-list');
   const textArea = cardModal.querySelector('textarea');
@@ -538,9 +531,9 @@ function getModalContent(target,cardModal) {
   //add members
   appData.members.forEach((member) => {
 
-    let memberLabel = createElement('label', ['margin-top-5' ,'display-block', 'form-check-label'], membersList);
+    let memberLabel = createElement('label', ['margin-top-5', 'display-block', 'form-check-label'], membersList);
     memberLabel.innerHTML = `<input class="margin-right-5 form-check-input" type="checkbox">${member.name}`;
-    memberLabel.setAttribute('data-id',`${member.id}`)
+    memberLabel.setAttribute('data-id', `${member.id}`)
     //check correct members
     selectedCardData.members.forEach((memberData) => {
 
@@ -556,8 +549,11 @@ function getModalContent(target,cardModal) {
     option.setAttribute('data-id', list.id);
     option.textContent = list.title;
 
-    if (list.id === selectedListId) {
+    const optionId = option.getAttribute('data-id');
+    if (optionId === selectedListId) {
       option.selected = true;
+      console.info(optionId);
+      console.info(selectedListId);
 
       //add card description
       let card = list.tasks.find((task) => {
@@ -578,23 +574,36 @@ function saveCardChanges(event) {
   const selectedCardId = cardModal.getAttribute('data-card');
   const selectedListId = cardModal.getAttribute('data-list');
   const lists = document.querySelectorAll('.panel');
+  const listOptions = moveToList.querySelectorAll('option');
 
-  let selectedList ='';
+  console.info(listOptions);
 
-  lists.forEach((list)=>{
-  const temListId = list.getAttribute('data-id');
-  if(temListId === selectedListId){
-    selectedList = list;
-  }
-});
+  let selectedOption ='';
+  listOptions.forEach((listOption) => {
+    if(listOption.selected === true){
+      selectedOption = listOption;
+    }
+  });
+
+  console.info(selectedOption);
+
+
+  let selectedList = '';
+
+  lists.forEach((list) => {
+    const temListId = list.getAttribute('data-id');
+    if (temListId === selectedListId) {
+      selectedList = list;
+    }
+  });
 
   const listCards = selectedList.querySelectorAll('.assignment');
 
-  let selectedcard ='';
+  let selectedCard = '';
 
-  listCards.forEach((card)=>{
+  listCards.forEach((card) => {
     const temCardId = card.getAttribute('data-id');
-    if(temCardId === selectedCardId){
+    if (temCardId === selectedCardId) {
       selectedcard = card;
     }
   });
@@ -613,46 +622,88 @@ function saveCardChanges(event) {
     if (checkbox.checked === true) {
 
       let lableId = checkbox.closest('label').getAttribute('data-id');
-      console.info(lableId);
+
       temMembersArr.push(lableId);
     }
   });
 
   const selectedCardFooter = selectedcard.querySelector('.assignment-footer');
 
-  if(selectedCardFooter){
+  if (selectedCardFooter) {
     selectedcard.removeChild(selectedCardFooter);
   }
 
   membersMaker(temMembersArr, selectedcard);
   cardModal.style.display = 'none';
-  saveModalChanges(selectedListId, selectedCardId, temMembersArr,cardTxt);
+  saveModalChanges(selectedListId, selectedCardId, temMembersArr, cardTxt);
   removeModalContent(cardModal);
+
+  //find the selected list
+
+
+
+
+
+  //remove card from current list
+
+  let currnetCard = '';
+
+  lists.forEach((list) => {
+    const listId = list.getAttribute('data-id');
+    if (listId === selectedListId) {
+      const cards = list.querySelectorAll('.assignment');
+      cards.forEach((card) => {
+        const cardId = card.getAttribute('data-id');
+        if (cardId === selectedCardId) {
+          currnetCard = card;
+        }
+      })
+    }
+  });
+
+
+  console.info('card', currnetCard);
+  let currnetListUl = currnetCard.closest('.flex-box');
+  console.info('list', currnetListUl);
+
+
+
+
+    //currnetListUl.removeChild(currnetCard);
+
+
+  // THE ID I WANT 733d5a2f-4561-40d1-bc2d-73e0f38c2588
+  //move to selected list
+
+
+  /*
+
+   */
 }
 
-function deleteCard(event){
+function deleteCard(event) {
   const cardModal = document.querySelector('.light-box');
   const selectedCardId = cardModal.getAttribute('data-card');
   const selectedListId = cardModal.getAttribute('data-list');
 
   const lists = document.querySelectorAll('.panel');
 
-  let selectedList ='';
+  let selectedList = '';
 
-  lists.forEach((list)=>{
+  lists.forEach((list) => {
     const temListId = list.getAttribute('data-id');
-    if(temListId === selectedListId){
+    if (temListId === selectedListId) {
       selectedList = list;
     }
   });
 
   const listCards = selectedList.querySelectorAll('.assignment');
 
-  let selectedcard ='';
+  let selectedcard = '';
 
-  listCards.forEach((card)=>{
+  listCards.forEach((card) => {
     const temCardId = card.getAttribute('data-id');
-    if(temCardId === selectedCardId){
+    if (temCardId === selectedCardId) {
       selectedcard = card;
     }
   });
@@ -681,7 +732,6 @@ function toggleModal(event) {
     getModalContent(target, cardModal);
   }
 }
-
 
 
 /** member functions */
@@ -862,9 +912,6 @@ function handelMemberMaking(data) {
     createMember();
   }
 }
-
-
-
 
 
 console.info(appData);
