@@ -2,6 +2,19 @@
  * Created by yaelo on 2/27/17.
  */
 
+  //do enter event listiners on inputs
+  /*
+     //add form to html
+     //refactor anithing related to container; li
+     //prevent defult thing
+
+   */
+
+
+  // drag and drop
+/*
+ */
+  // transitions
 
 const appData = {
   lists: [],
@@ -49,7 +62,6 @@ function saveMemberEditingInAppData(memberDataId, memberInPut) {
     return member.id === memberDataId;
   });
   //find the currnt member index in appdata
-  const index = appData.members.indexOf(currentMember);
 
   currentMember.name = `${memberInPut.value}`;
 }
@@ -115,18 +127,19 @@ function addCardToListInAppData(cardId, cardDiscription, parentSectionId) {
 
 
 //modal
-function saveModalChanges(selectedListId, selectedCardId, temMembersArr, cardTxt) {
+function saveModalDiscription(selectedListId, selectedCardId, cardTxt) {
+
   //get the card from app data
-  const selectedListData = appData.lists.find((list) => {
-    return list.id === selectedListId;
-  });
-  //get the list from app data
-
-  const selectedCardData = selectedListData.tasks.find((task) => {
-    return task.id === selectedCardId;
-  });
-
+  let selectedCardData = getCardDataById(selectedListId, selectedCardId);
+  //change the discription
   selectedCardData.text = cardTxt.textContent;
+}
+
+function saveModalMembers(selectedListId, selectedCardId, temMembersArr) {
+
+  //get the card from app data
+  let selectedCardData = getCardDataById(selectedListId, selectedCardId);
+  //change the members
   selectedCardData.members = temMembersArr;
 }
 
@@ -146,9 +159,36 @@ function removeCardInAppData(selectedListId, selectedCardId) {
 
 }
 
+function saveMoveToListAppData(CardInAppData, ListInAppData, OptionId) {
+  appData.lists.forEach((list) => {
+    if (list.id === OptionId) {
+      list.tasks.push(CardInAppData);
+    }
+  });
+
+  const index = ListInAppData.tasks.indexOf(CardInAppData)
+  console.info(index);
+
+  ListInAppData.tasks.splice(index, 1);
+}
 
 /** general functions */
 
+//appdata
+//get card with dom id from app data
+function getCardDataById(ListId, CardId) {
+  const ListData = appData.lists.find((list) => {
+    return list.id === ListId;
+  });
+
+  const CardData = ListData.tasks.find((task) => {
+    return task.id === CardId;
+  });
+
+  return CardData;
+}
+
+//dom
 function addEventListeners(elements, arrayOfEvents, eventListener) {
   for (const element of elements) {
     for (const event of arrayOfEvents) {
@@ -191,7 +231,7 @@ function getInishials(str) {
   const strArr = str.split(' ');
   const twoWordArr = [];
   for (const smallStr of strArr) {
-    const letter = smallStr[0].toUpperCase();
+    const letter = smallStr[0];
 
     twoWordArr.push(letter);
   }
@@ -240,7 +280,7 @@ function handelListMaking(data) {
       }
     }
 
-    function handelCards(obj) {
+    function handelCards(obj, task) {
 
       if (obj !== undefined) {
         let tasks = obj.tasks;
@@ -367,8 +407,7 @@ function membersMaker(membersId, card) {
   }
 }
 
-
-//list btns and input
+//events
 function deleteList(event) {
 
   //target the list
@@ -487,6 +526,8 @@ function addNewCard(event) {
 }
 
 
+
+
 /** modal functions */
 
 function removeModalContent(cardModal) {
@@ -518,10 +559,8 @@ function getModalContent(target, cardModal) {
 
   //find card in appData
   const selectedListData = appData.lists.find((list) => {
-
     return list.id === selectedListId
   });
-
 
   const selectedCardData = selectedListData.tasks.find((task) => {
 
@@ -546,10 +585,10 @@ function getModalContent(target, cardModal) {
   //fill move-to options and text area content
   appData.lists.forEach((list) => {
     let option = createElement('option', undefined, moveToList);
-    option.setAttribute('data-id', list.id);
+    option.setAttribute('data-list-id', list.id);
     option.textContent = list.title;
 
-    const optionId = option.getAttribute('data-id');
+    const optionId = option.getAttribute('data-list-id');
     if (optionId === selectedListId) {
       option.selected = true;
       console.info(optionId);
@@ -564,123 +603,125 @@ function getModalContent(target, cardModal) {
   });
 }
 
-function saveCardChanges(event) {
+//save btn
+function saveCardTxt(currentCardDom, selectedListId, selectedCardId) {
 
-  //get selected move to option
-  const cardModal = document.querySelector('.light-box');
+  //save DOM elements
   const textArea = document.querySelector('textarea');
-  const moveToList = cardModal.querySelector('.move-to-list');
-  const membersList = cardModal.querySelector('.check-box-list');
-  const selectedCardId = cardModal.getAttribute('data-card');
-  const selectedListId = cardModal.getAttribute('data-list');
-  const lists = document.querySelectorAll('.panel');
-  const listOptions = moveToList.querySelectorAll('option');
-
-  console.info(listOptions);
-
-  let selectedOption ='';
-  listOptions.forEach((listOption) => {
-    if(listOption.selected === true){
-      selectedOption = listOption;
-    }
-  });
-
-  console.info(selectedOption);
-
-
-  let selectedList = '';
-
-  lists.forEach((list) => {
-    const temListId = list.getAttribute('data-id');
-    if (temListId === selectedListId) {
-      selectedList = list;
-    }
-  });
-
-  const listCards = selectedList.querySelectorAll('.assignment');
-
-  let selectedCard = '';
-
-  listCards.forEach((card) => {
-    const temCardId = card.getAttribute('data-id');
-    if (temCardId === selectedCardId) {
-      selectedcard = card;
-    }
-  });
-
-
-  //change discreption
-  const cardTxt = selectedcard.querySelector('p');
+  const cardTxt = currentCardDom.querySelector('p');
   cardTxt.textContent = textArea.value;
 
-  //change members
-  const checkboxes = cardModal.querySelectorAll("input[type='checkbox']");
+  //save change in AppData
+  saveModalDiscription(selectedListId, selectedCardId, cardTxt);
+}
+
+function saveCardMembers(cardModal, currentCardDom, selectedListId, selectedCardId) {
+  const checkboxes = cardModal.querySelectorAll("input[type ='checkbox']");
 
   const temMembersArr = [];
 
+  //find checked modal checkboxes
   checkboxes.forEach((checkbox) => {
     if (checkbox.checked === true) {
-
+      //get the checkbox label container id and push it to temarr
       let lableId = checkbox.closest('label').getAttribute('data-id');
-
       temMembersArr.push(lableId);
     }
   });
 
-  const selectedCardFooter = selectedcard.querySelector('.assignment-footer');
-
+  //get the current card footer
+  const selectedCardFooter = currentCardDom.querySelector('.assignment-footer');
+  //if it 'is' remove it
   if (selectedCardFooter) {
-    selectedcard.removeChild(selectedCardFooter);
+    currentCardDom.removeChild(selectedCardFooter);
   }
 
-  membersMaker(temMembersArr, selectedcard);
-  cardModal.style.display = 'none';
-  saveModalChanges(selectedListId, selectedCardId, temMembersArr, cardTxt);
-  removeModalContent(cardModal);
+  //make new members in current card
+  membersMaker(temMembersArr, currentCardDom);
 
-  //find the selected list
+  saveModalMembers(selectedListId, selectedCardId, temMembersArr);
+}
 
+function saveMoveToList(moveToList, selectedListId, currentCardBoard, currentCardInAppData, currentListInAppData) {
+  const listOptions = moveToList.querySelectorAll('option');
 
+  //get the selected option
+  let selectedOption = '';
 
-
-
-  //remove card from current list
-
-  let currnetCard = '';
-
-  lists.forEach((list) => {
-    const listId = list.getAttribute('data-id');
-    if (listId === selectedListId) {
-      const cards = list.querySelectorAll('.assignment');
-      cards.forEach((card) => {
-        const cardId = card.getAttribute('data-id');
-        if (cardId === selectedCardId) {
-          currnetCard = card;
-        }
-      })
+  listOptions.forEach((listOption) => {
+    if (listOption.selected === true) {
+      selectedOption = listOption;
     }
   });
 
+  //get the selected option id
+  let selectedOptionId = selectedOption.getAttribute('data-list-id');
 
-  console.info('card', currnetCard);
-  let currnetListUl = currnetCard.closest('.flex-box');
-  console.info('list', currnetListUl);
+  if (selectedOptionId !== selectedListId) {
+    //get the card
+    const moveCardTo = document.querySelector(`[data-id = "${selectedOptionId}"]`);
 
+    //get the correct card holder in the correct list
+    const moveToCardContainer = moveCardTo.querySelector('.flex-box');
 
+    //put the  card in the correct list
+    moveToCardContainer.appendChild(currentCardBoard);
 
+    //save to appData
+    saveMoveToListAppData(currentCardInAppData, currentListInAppData, selectedOptionId);
 
-    //currnetListUl.removeChild(currnetCard);
-
-
-  // THE ID I WANT 733d5a2f-4561-40d1-bc2d-73e0f38c2588
-  //move to selected list
-
-
-  /*
-
-   */
+  }
 }
 
+function saveCardHandler(event) {
+
+  //get modal dom
+  const cardModal = document.querySelector('.light-box');
+  const moveToList = cardModal.querySelector('.move-to-list');
+  const selectedCardId = cardModal.getAttribute('data-card');
+  const selectedListId = cardModal.getAttribute('data-list');
+
+  //get appdata
+  let currentCardInAppData = '';
+  let currentListInAppData = '';
+  // memberDataId = id
+  //find the tasks that have this id in its members
+  appData.lists.forEach((list) => {
+    if (list.id === selectedListId) {
+      currentListInAppData = list
+      list.tasks.forEach((task) => {
+        if (task.id === selectedCardId) {
+          currentCardInAppData = task
+        }
+      });
+    }
+  });
+  console.info(currentCardInAppData);
+
+  //get boardPage dom
+  const currentCardBoard = document.querySelector(`[data-id = "${selectedCardId}"]`);
+
+
+  //SAVE CARD DESCRIPTION
+  saveCardTxt(currentCardBoard, selectedListId, selectedCardId);
+
+  //SAVE MODAL IN MEMBERS
+  saveCardMembers(cardModal, currentCardBoard, selectedListId, selectedCardId);
+
+  //remove thae task from current list in appData
+  //MOVE TO LIST
+  saveMoveToList(moveToList, selectedListId, currentCardBoard, currentCardInAppData, currentListInAppData);
+
+  //save in appData
+
+  //hide modal
+  cardModal.style.display = 'none';
+
+  removeModalContent(cardModal);
+
+}
+
+//delete btn
 function deleteCard(event) {
   const cardModal = document.querySelector('.light-box');
   const selectedCardId = cardModal.getAttribute('data-card');
@@ -717,21 +758,26 @@ function deleteCard(event) {
 
 }
 
+//close + edit btn
 function toggleModal(event) {
   //get modal dom element
   const cardModal = document.querySelector('.light-box');
   //close modal
   if (cardModal.style.display === 'flex') {
     cardModal.style.display = 'none';
+
     removeModalContent(cardModal);
   }
   //open modal
   else {
     cardModal.style.display = 'flex';
     const target = event.target;
+
     getModalContent(target, cardModal);
   }
 }
+
+
 
 
 /** member functions */
@@ -810,7 +856,7 @@ function DeleteMember(event) {
   removeMemberFromAppDataMembers(memberDataId);
 }
 
-function createMember(memberData) {
+  function createMember(memberData) {
 
   function handelMemberName(memberData) {
 
@@ -896,13 +942,13 @@ function handelMemberMaking(data) {
     main.innerHTML = `<div class="members">
     <h2 class="display-block capitalize">taskboard members</h2>
     <ul class="members-list list-group">
-
       <li class="add-new-member list-group-item">
-        <input class="display-block list-name-input" type="text" placeholder="Add new member" maxlength="26">
-        <button type="button" onclick="handelMemberMaking()" class="btn btn-primary">add</button>
+      <input class="display-block list-name-input" type="text" placeholder="Add new member">
+        <button type="button" onclick="handelMemberMaking()" class="btn btn-primary">add</button>       
       </li>
     </ul>
   </div>`
+
 
     for (let memberData of membersData) {
       createMember(memberData);

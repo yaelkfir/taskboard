@@ -99,10 +99,6 @@ header .logo {
 
 /* LIST SCROLL  */
 .over-flow-mask {
-  width: 100%;
-  top: 50px;
-  bottom: 50px;
-  padding: 15px 0 5px 0px;
   overflow-y: auto;
   overflow-x: hidden;
   max-height: calc(100vh - 215px);
@@ -119,7 +115,14 @@ header .logo {
 /* SCROLL BAR */
 
 .over-flow-mask::-webkit-scrollbar {
-  width: 16px;
+  width: 14px;
+  display: none;
+  z-index: 1000000;
+}
+
+.over-flow-mask:hover::-webkit-scrollbar{
+  display: block;
+  z-index: 1000000;
 }
 
 .over-flow-mask::-webkit-scrollbar-track {
@@ -138,7 +141,7 @@ header .logo {
 
 .assignment {
 
-  width: 90%;
+  width: 220px;
   padding: 15px;
   margin-bottom: 10px;
   border-radius: 5px;
@@ -238,8 +241,11 @@ header .logo {
 
 .user-icon{
   padding: 0.2em .6em .2em;
-  margin-right: 10px;
+  /* margin-right: 10px; */
+  margin-left: 10px;
+  margin-top: 10px;
   display: flex;
+  height: 20px;
   justify-content: center;
   align-items: center;
   text-transform: uppercase;
@@ -247,15 +253,13 @@ header .logo {
 
 .assignment-footer{
   width: 100%;
-  height: 20px;
   display: flex;
-  margin-top: 15px;
+  flex-wrap: wrap;
+  margin-top: 5px;
   justify-content: flex-end;
 }
 
-.user-icon:last-child{
-  margin: 0;
-}
+
 
 .card-header{
   height: 20px;
@@ -323,9 +327,8 @@ bottom :-20px;
 .flex-box {
   display: flex;
   flex-direction: column;
-  align-items: center;
   width: 240px;
-  margin: auto;
+  padding: 14px;
 }
 
 .flex-box:after{
