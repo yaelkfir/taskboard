@@ -2,191 +2,33 @@
  * Created by yaelo on 2/27/17.
  */
 
-  //do enter event listiners on inputs
-  /*
-     //add form to html
-     //refactor anithing related to container; li
-     //prevent defult thing
+//do enter event listiners on inputs
+/*
+ //add form to html
+ //refactor anithing related to container; li
+ //prevent defult thing
 
-   */
+ */
 
 
-  // drag and drop
+// drag and drop
 /*
  */
-  // transitions
+// transitions
 
-const appData = {
-  lists: [],
-  members: []
-};
+
 const ENTER = 13;
 /**
  * udating appdata
  */
 
-//members
-function removeMemberFromAppDataMembers(memberDataId) {
-  let currentMember = appData.members.find((member) => {
-    return member.id === memberDataId;
-  });
-
-  const index = appData.members.indexOf(currentMember);
-  appData.members.splice(index, 1);
-  removeMemberFromAppDataCards(memberDataId);
-}
-
-function removeMemberFromAppDataCards(memberDataId) {
-  let toRemoveMember = '';
-  // memberDataId = id
-  //find the tasks that have this id in its members
-  appData.lists.forEach((list) => {
-
-    list.tasks.forEach((task) => {
-      const members = task.members;
-
-      members.forEach((member) => {
-        if (memberDataId === member) {
-          toRemoveMember = member;
-          const index = members.indexOf(toRemoveMember);
-
-          members.splice(index, 1);
-        }
-      });
-    });
-  });
-}
-
-function saveMemberEditingInAppData(memberDataId, memberInPut) {
-  let currentMember = appData.members.find((member) => {
-    return member.id === memberDataId;
-  });
-  //find the currnt member index in appdata
-
-  currentMember.name = `${memberInPut.value}`;
-}
-
-function addMemberObjToAppData(memberDataId, membersInput) {
-  let temMember = {
-    id: `${memberDataId}`,
-    name: `${membersInput.value}`
-  };
-  appData.members.push(temMember);
-}
 
 
-//lists
-function addNewListToAppData(newList, listName) {
-  const listDataId = newList.getAttribute('data-id');
-  //add to appData
-  let temList = {
-    id: listDataId,
-    title: `${listName.textContent}`,
-    tasks: []
-  }
-  appData.lists.push(temList);
-
-}
-
-function removeListFromAppData(listSectionId) {
-  let currentList = appData.lists.find((list) => {
-    return list.id === listSectionId;
-  });
-
-  const index = appData.lists.indexOf(currentList);
-  appData.lists.splice(index, 1);
-}
-
-function changeListNameInAppData(listDataId, target) {
-  let currentList = appData.lists.find((list) => {
-    return list.id === listDataId
-  });
-
-  const index = appData.lists.indexOf(currentList);
-
-  appData.lists[index].title = target.value;
-}
-
-
-//cards
-function addCardToListInAppData(cardId, cardDiscription, parentSectionId) {
-
-  let tempCard = {
-    id: `${cardId}`,
-    text: `${cardDiscription.textContent }`,
-    members: []
-  };
-
-  for (let list of appData.lists) {
-    if (list.id === parentSectionId) {
-
-      list.tasks.push(tempCard);
-    }
-  }
-}
-
-
-//modal
-function saveModalDiscription(selectedListId, selectedCardId, cardTxt) {
-
-  //get the card from app data
-  let selectedCardData = getCardDataById(selectedListId, selectedCardId);
-  //change the discription
-  selectedCardData.text = cardTxt.textContent;
-}
-
-function saveModalMembers(selectedListId, selectedCardId, temMembersArr) {
-
-  //get the card from app data
-  let selectedCardData = getCardDataById(selectedListId, selectedCardId);
-  //change the members
-  selectedCardData.members = temMembersArr;
-}
-
-function removeCardInAppData(selectedListId, selectedCardId) {
-
-  //find the list in appdata
-  const selectedListData = appData.lists.find((list) => {
-    return list.id === selectedListId;
-  });
-
-  const selectedCardData = selectedListData.tasks.find((task) => {
-    return task.id === selectedCardId;
-  });
-
-  const index = selectedListData.tasks.indexOf(selectedCardData);
-  selectedListData.tasks.splice(index, 1);
-
-}
-
-function saveMoveToListAppData(CardInAppData, ListInAppData, OptionId) {
-  appData.lists.forEach((list) => {
-    if (list.id === OptionId) {
-      list.tasks.push(CardInAppData);
-    }
-  });
-
-  const index = ListInAppData.tasks.indexOf(CardInAppData)
-  console.info(index);
-
-  ListInAppData.tasks.splice(index, 1);
-}
 
 /** general functions */
 
 //appdata
 //get card with dom id from app data
-function getCardDataById(ListId, CardId) {
-  const ListData = appData.lists.find((list) => {
-    return list.id === ListId;
-  });
-
-  const CardData = ListData.tasks.find((task) => {
-    return task.id === CardId;
-  });
-
-  return CardData;
-}
 
 //dom
 function addEventListeners(elements, arrayOfEvents, eventListener) {
@@ -236,6 +78,22 @@ function getInishials(str) {
     twoWordArr.push(letter);
   }
   return twoWordArr.join('');
+}
+
+function scrollTo(element, to, duration) {
+  if (duration <= 0) return;
+  const difference = to - element.scrollTop;
+  const perTick = difference / duration * 10;
+
+  setTimeout(function () {
+    element.scrollTop = element.scrollTop + perTick;
+    if (element.scrollTop == to) return;
+    scrollTo(element, to, duration - 10);
+  }, 10)
+}
+
+function removeId(card) {
+  card.removeAttribute('id');
 }
 
 
@@ -291,7 +149,9 @@ function handelListMaking(data) {
           const cardWraper = createElement('li', ['assignment'], listUl);
           cardWraper.tabIndex = '0';
           cardWraper.setAttribute('data-id', `${task.id}`);
+          cardWraper.setAttribute('draggable', "true");
 
+          cardWraper.addEventListener('dragstart', dragStart);
 
           //create edit btn and appand to dad ul
           const editBtn = createElement('button', ['card-edit-btn', 'btn', 'btn-info', 'btn-xs'], cardWraper);
@@ -301,7 +161,19 @@ function handelListMaking(data) {
           //create interactive task description
           const cardDiscription = createElement('p', ['card-description', 'p-no-margins'], cardWraper);
 
-          cardDiscription.textContent = task.text;
+          if (task.text.length > 300) {
+
+            const num = task.text.length
+            const numMinostreehandened = num - 300;
+
+            cardDiscription.textContent = task.text.substr(300, numMinostreehandened) + ' ...';
+
+          }
+
+          else {
+            cardDiscription.textContent = task.text;
+
+          }
 
           //loop the member
 
@@ -374,6 +246,13 @@ function handelListMaking(data) {
     //create the list footer add it to dad and give class
     const listFooter = createElement('div', ['panel-footer', 'list-footer'], newList);
     listFooter.tabIndex = '0';
+
+    //darg&drop
+
+    listUl.addEventListener("dragover", allowDrop);
+    listUl.addEventListener("drop", dropCard);
+    // highlight potential drop target when the draggable element enters it
+
 
     //create the add card btn in footer and give class and onclick
     const addCardBtn = createElement('span', ['panel-footer-btn'], listFooter);
@@ -491,17 +370,7 @@ function saveListName(event) {
 function addNewCard(event) {
 
 //scroll to the lest card added.
-  function scrollTo(element, to, duration) {
-    if (duration <= 0) return;
-    const difference = to - element.scrollTop;
-    const perTick = difference / duration * 10;
 
-    setTimeout(function () {
-      element.scrollTop = element.scrollTop + perTick;
-      if (element.scrollTop == to) return;
-      scrollTo(element, to, duration - 10);
-    }, 10)
-  }
 
   const targetElement = event.target;
   targetElement.blur();
@@ -510,6 +379,7 @@ function addNewCard(event) {
   const parentSectionId = parantSection.getAttribute('data-id');
   const currentList = parantSection.querySelector('.flex-box');
   const cardWraper = createElement('li', ['assignment'], currentList);
+
   const editBtn = createElement('button', ['card-edit-btn', 'btn', 'btn-info', 'btn-xs'], cardWraper);
   editBtn.textContent = 'Edit card';
   editBtn.addEventListener("click", toggleModal);
@@ -521,11 +391,103 @@ function addNewCard(event) {
   scrollTo(parntScroler, parntScroler.scrollHeight, 300);
   const cardId = uuid();
   cardWraper.setAttribute('data-id', `${cardId}`);
+
+  cardWraper.setAttribute('draggable', "true");
+  cardWraper.addEventListener('dragstart', dragStart);
+
   addCardToListInAppData(cardId, cardDiscription, parentSectionId);
 
 }
 
+//drag & drop
 
+function dragStart(e) {
+
+  const draggedCardId = e.target.getAttribute('data-id');
+  e.dataTransfer.setData("text/plain", draggedCardId);
+
+}
+
+function allowDrop(e) {
+  e.preventDefault();
+}
+
+function dropCard(e) {
+
+  e.preventDefault();
+// get needed data from to in order to save the card in the dragged to list in app data
+  const draggedCardId = e.dataTransfer.getData("text/plain");
+  const dragedCard = document.querySelector(`[data-id = '${draggedCardId}']`);
+  const dragedToList = e.target.closest('.panel');
+  const dragedToListId = dragedToList.getAttribute('data-id');
+  const oldListId = dragedCard.closest('.panel').getAttribute('data-id');
+  const ulList = e.target.closest('.flex-box');
+
+  //appData card
+
+  let draggedCardInAppData = getCardDataById(oldListId, draggedCardId);
+
+
+  if (e.target.className !== " flex-box") {
+
+    if (oldListId !== dragedToListId) {
+
+      const targetTask = e.target.closest('.assignment');
+      const targetTaskId = targetTask.getAttribute('data-id');
+
+
+      ulList.insertBefore(dragedCard, targetTask);
+
+      //apdate list in appdata saveMoveToListAppData(CardInAppData, moveToListId)
+      saveMoveToListAppData(draggedCardInAppData, dragedToListId);
+
+      updateTaskOrder(dragedToListId,dragedToList,targetTaskId,draggedCardId);
+
+      //remove from prev list in appdata
+      removeCardInAppData(oldListId, draggedCardId);
+
+
+
+    }
+
+    if (oldListId === dragedToListId) {
+
+      const targetTask = e.target.closest('.assignment');
+      const targetTaskId = targetTask.getAttribute('data-id');
+
+      ulList.insertBefore(dragedCard, targetTask);
+
+      //save new task order to appdata
+//get the tasks order from dom
+
+      updateTaskOrder(dragedToListId,dragedToList,targetTaskId,draggedCardId);
+    }
+
+  }
+
+  else {
+
+    const targetTask = e.target.closest('.assignment');
+
+    ulList.insertBefore(dragedCard, targetTask)
+
+    const scrollerContainer = ulList.closest('.over-flow-mask');
+    //get the e targt
+    scrollTo(scrollerContainer, scrollerContainer.scrollHeight, 300);
+    //get appdata
+
+    removeId(dragedCard);
+//update in appdata
+
+    //apdate list in appdata saveMoveToListAppData(CardInAppData, moveToListId)
+    saveMoveToListAppData(draggedCardInAppData, dragedToListId);
+
+    //remove from prev list in appdata
+    removeCardInAppData(oldListId, draggedCardId);
+
+  }
+
+}
 
 
 /** modal functions */
@@ -557,20 +519,15 @@ function getModalContent(target, cardModal) {
   const cardModalId = cardModal.setAttribute('data-card', selectedCardId);
   const listModalId = cardModal.setAttribute('data-list', selectedListId);
 
-  //find card in appData
-  const selectedListData = appData.lists.find((list) => {
-    return list.id === selectedListId
-  });
 
-  const selectedCardData = selectedListData.tasks.find((task) => {
+  const selectedListData = findListInAppData(selectedListId);
 
-    return task.id === selectedCardId;
-  });
-
+  const selectedCardData = findCardByListInAppData(selectedListData,selectedCardId);
   //add members
   appData.members.forEach((member) => {
-
+//
     let memberLabel = createElement('label', ['margin-top-5', 'display-block', 'form-check-label'], membersList);
+
     memberLabel.innerHTML = `<input class="margin-right-5 form-check-input" type="checkbox">${member.name}`;
     memberLabel.setAttribute('data-id', `${member.id}`)
     //check correct members
@@ -591,8 +548,7 @@ function getModalContent(target, cardModal) {
     const optionId = option.getAttribute('data-list-id');
     if (optionId === selectedListId) {
       option.selected = true;
-      console.info(optionId);
-      console.info(selectedListId);
+      ;
 
       //add card description
       let card = list.tasks.find((task) => {
@@ -642,7 +598,7 @@ function saveCardMembers(cardModal, currentCardDom, selectedListId, selectedCard
   saveModalMembers(selectedListId, selectedCardId, temMembersArr);
 }
 
-function saveMoveToList(moveToList, selectedListId, currentCardBoard, currentCardInAppData, currentListInAppData) {
+function saveMoveToList(moveToList, selectedListId, currentCardBoard, currentCardInAppData, selectedCardId) {
   const listOptions = moveToList.querySelectorAll('option');
 
   //get the selected option
@@ -668,7 +624,9 @@ function saveMoveToList(moveToList, selectedListId, currentCardBoard, currentCar
     moveToCardContainer.appendChild(currentCardBoard);
 
     //save to appData
-    saveMoveToListAppData(currentCardInAppData, currentListInAppData, selectedOptionId);
+    saveMoveToListAppData(currentCardInAppData, selectedOptionId);
+
+    removeCardInAppData(selectedListId, selectedCardId);
 
   }
 }
@@ -682,21 +640,9 @@ function saveCardHandler(event) {
   const selectedListId = cardModal.getAttribute('data-list');
 
   //get appdata
-  let currentCardInAppData = '';
-  let currentListInAppData = '';
-  // memberDataId = id
-  //find the tasks that have this id in its members
-  appData.lists.forEach((list) => {
-    if (list.id === selectedListId) {
-      currentListInAppData = list
-      list.tasks.forEach((task) => {
-        if (task.id === selectedCardId) {
-          currentCardInAppData = task
-        }
-      });
-    }
-  });
-  console.info(currentCardInAppData);
+  let currentListInAppData = findListInAppData(selectedListId);
+
+  let currentCardInAppData = findCardByListInAppData(currentListInAppData, selectedCardId);
 
   //get boardPage dom
   const currentCardBoard = document.querySelector(`[data-id = "${selectedCardId}"]`);
@@ -710,7 +656,7 @@ function saveCardHandler(event) {
 
   //remove thae task from current list in appData
   //MOVE TO LIST
-  saveMoveToList(moveToList, selectedListId, currentCardBoard, currentCardInAppData, currentListInAppData);
+  saveMoveToList(moveToList, selectedListId, currentCardBoard, currentCardInAppData, selectedCardId);
 
   //save in appData
 
@@ -776,8 +722,6 @@ function toggleModal(event) {
     getModalContent(target, cardModal);
   }
 }
-
-
 
 
 /** member functions */
@@ -856,7 +800,7 @@ function DeleteMember(event) {
   removeMemberFromAppDataMembers(memberDataId);
 }
 
-  function createMember(memberData) {
+function createMember(memberData) {
 
   function handelMemberName(memberData) {
 
