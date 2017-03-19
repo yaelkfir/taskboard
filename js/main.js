@@ -2,35 +2,10 @@
  * Created by yaelo on 2/27/17.
  */
 
-//do enter event listiners on inputs
-/*
- //add form to html
- //refactor anithing related to container; li
- //prevent defult thing
-
- */
-
-
-// drag and drop
-/*
- */
-// transitions
-
-
 const ENTER = 13;
-/**
- * udating appdata
- */
-
-
-
 
 /** general functions */
 
-//appdata
-//get card with dom id from app data
-
-//dom
 function addEventListeners(elements, arrayOfEvents, eventListener) {
   for (const element of elements) {
     for (const event of arrayOfEvents) {
@@ -92,9 +67,6 @@ function scrollTo(element, to, duration) {
   }, 10)
 }
 
-function removeId(card) {
-  card.removeAttribute('id');
-}
 
 
 /** list functions */
@@ -152,7 +124,9 @@ function handelListMaking(data) {
           cardWraper.setAttribute('draggable', "true");
 
           cardWraper.addEventListener('dragstart', dragStart);
-
+          cardWraper.addEventListener("dragend",dargEnd);
+          cardWraper.addEventListener("dragover", dragOver);
+          cardWraper.addEventListener("dragleave", dragLeave);
           //create edit btn and appand to dad ul
           const editBtn = createElement('button', ['card-edit-btn', 'btn', 'btn-info', 'btn-xs'], cardWraper);
           editBtn.textContent = 'Edit card';
@@ -161,19 +135,7 @@ function handelListMaking(data) {
           //create interactive task description
           const cardDiscription = createElement('p', ['card-description', 'p-no-margins'], cardWraper);
 
-          if (task.text.length > 300) {
-
-            const num = task.text.length
-            const numMinostreehandened = num - 300;
-
-            cardDiscription.textContent = task.text.substr(300, numMinostreehandened) + ' ...';
-
-          }
-
-          else {
-            cardDiscription.textContent = task.text;
-
-          }
+          cardDiscription.textContent = task.text;
 
           //loop the member
 
@@ -251,6 +213,7 @@ function handelListMaking(data) {
 
     listUl.addEventListener("dragover", allowDrop);
     listUl.addEventListener("drop", dropCard);
+
     // highlight potential drop target when the draggable element enters it
 
 
@@ -267,24 +230,6 @@ function handelListMaking(data) {
   }
 }
 
-function membersMaker(membersId, card) {
-  if (membersId.length > 0) {
-//add data-id to member span
-    const cardFooter = createElement('div', ['assignment-footer'], card);
-
-    for (let memberId of membersId) {
-
-      const userOnTask = createElement('span', ['user-icon', 'label', 'label-primary'], cardFooter);
-      appData.members.forEach((member) => {
-        if (member.id === memberId) {
-          let memberName = member.name
-          userOnTask.setAttribute('title', `${memberName}`);
-          userOnTask.innerHTML = getInishials(memberName);
-        }
-      });
-    }
-  }
-}
 
 //events
 function deleteList(event) {
@@ -370,8 +315,6 @@ function saveListName(event) {
 function addNewCard(event) {
 
 //scroll to the lest card added.
-
-
   const targetElement = event.target;
   targetElement.blur();
 
@@ -394,6 +337,9 @@ function addNewCard(event) {
 
   cardWraper.setAttribute('draggable', "true");
   cardWraper.addEventListener('dragstart', dragStart);
+  cardWraper.addEventListener("dragend",dargEnd);
+  cardWraper.addEventListener("dragover", dragOver);
+  cardWraper.addEventListener("dragleave", dragLeave);
 
   addCardToListInAppData(cardId, cardDiscription, parentSectionId);
 
@@ -405,6 +351,43 @@ function dragStart(e) {
 
   const draggedCardId = e.target.getAttribute('data-id');
   e.dataTransfer.setData("text/plain", draggedCardId);
+  e.target.style.opacity = 0.3;
+  e.target.style.border = '3px solid #c8ecfd'
+}
+
+function dragOver(e) {
+  const target = e.target;
+  if (e.target.className !== " flex-box") {
+    if (target.className !== 'assignment') {
+
+      const targetCard = target.closest('.assignment');
+      targetCard.style.borderTop = '5px solid #c8ecfd'
+    }
+    if (target.className === 'assignment') {
+      target.style.borderTop = '5px solid #c8ecfd'
+    }
+  }
+}
+
+function dragLeave(e) {
+  const target= e.target;
+
+  if (e.target.className !== " flex-box") {
+    if (target.className !== 'assignment') {
+
+      const targetCard = target.closest('.assignment');
+      targetCard.style.borderTop = '1px solid #c8ecfd'
+    }
+
+    if (target.className === 'assignment') {
+      target.style.borderTop = '1px solid #c8ecfd'
+    }
+  }
+}
+
+function dargEnd(e){
+  e.target.style.opacity = 1;
+  e.target.style.border = '1px solid #c8ecfd'
 
 }
 
@@ -433,8 +416,10 @@ function dropCard(e) {
     if (oldListId !== dragedToListId) {
 
       const targetTask = e.target.closest('.assignment');
-      const targetTaskId = targetTask.getAttribute('data-id');
+      targetTask.style.borderTop = '1px solid #c8ecfd'
+      dragedCard.style.borderTop = '1px solid #c8ecfd'
 
+      const targetTaskId = targetTask.getAttribute('data-id');
 
       ulList.insertBefore(dragedCard, targetTask);
 
@@ -447,13 +432,14 @@ function dropCard(e) {
       removeCardInAppData(oldListId, draggedCardId);
 
 
-
     }
 
     if (oldListId === dragedToListId) {
 
       const targetTask = e.target.closest('.assignment');
       const targetTaskId = targetTask.getAttribute('data-id');
+      targetTask.style.borderTop = '1px solid #c8ecfd';
+      dragedCard.style.borderTop = '1px solid #c8ecfd';
 
       ulList.insertBefore(dragedCard, targetTask);
 
@@ -474,10 +460,7 @@ function dropCard(e) {
     const scrollerContainer = ulList.closest('.over-flow-mask');
     //get the e targt
     scrollTo(scrollerContainer, scrollerContainer.scrollHeight, 300);
-    //get appdata
 
-    removeId(dragedCard);
-//update in appdata
 
     //apdate list in appdata saveMoveToListAppData(CardInAppData, moveToListId)
     saveMoveToListAppData(draggedCardInAppData, dragedToListId);
@@ -506,6 +489,48 @@ function removeModalContent(cardModal) {
   });
 }
 
+function getMembersToModal(membersList,selectedCardData){
+  const members = getMembersFromAppData();
+
+  members.forEach((member) => {
+
+    let memberLabel = createElement('label', ['margin-top-5', 'display-block', 'form-check-label'], membersList);
+
+    memberLabel.innerHTML = `<input class="margin-right-5 form-check-input" type="checkbox">${member.name}`;
+    memberLabel.setAttribute('data-id', `${member.id}`)
+    //check correct members
+    selectedCardData.members.forEach((memberData) => {
+
+      if (memberData === member.id) {
+        memberLabel.innerHTML = `<input class="margin-right-5 form-check-input" type="checkbox" checked>${member.name}`;
+      }
+    });
+  });
+}
+
+function getListsandTxtToModal(moveToList,selectedListId,selectedCardId,textArea){
+  const lists = getLists();
+
+  lists.forEach((list) => {
+
+    let option = createElement('option', undefined, moveToList);
+    option.setAttribute('data-list-id', list.id);
+    option.textContent = list.title;
+
+    const optionId = option.getAttribute('data-list-id');
+    if (optionId === selectedListId) {
+      option.selected = true;
+
+
+      //add card description
+      let card = list.tasks.find((task) => {
+        return task.id === selectedCardId;
+      });
+      textArea.value = card.text;
+    }
+  });
+}
+
 function getModalContent(target, cardModal) {
 
   const moveToList = cardModal.querySelector('.move-to-list');
@@ -519,45 +544,19 @@ function getModalContent(target, cardModal) {
   const cardModalId = cardModal.setAttribute('data-card', selectedCardId);
   const listModalId = cardModal.setAttribute('data-list', selectedListId);
 
-
   const selectedListData = findListInAppData(selectedListId);
 
   const selectedCardData = findCardByListInAppData(selectedListData,selectedCardId);
+
   //add members
-  appData.members.forEach((member) => {
-//
-    let memberLabel = createElement('label', ['margin-top-5', 'display-block', 'form-check-label'], membersList);
-
-    memberLabel.innerHTML = `<input class="margin-right-5 form-check-input" type="checkbox">${member.name}`;
-    memberLabel.setAttribute('data-id', `${member.id}`)
-    //check correct members
-    selectedCardData.members.forEach((memberData) => {
-
-      if (memberData === member.id) {
-        memberLabel.innerHTML = `<input class="margin-right-5 form-check-input" type="checkbox" checked>${member.name}`;
-      }
-    });
-  });
+  getMembersToModal(membersList,selectedCardData);
 
   //fill move-to options and text area content
-  appData.lists.forEach((list) => {
-    let option = createElement('option', undefined, moveToList);
-    option.setAttribute('data-list-id', list.id);
-    option.textContent = list.title;
+  getListsandTxtToModal(moveToList,selectedListId,selectedCardId,textArea);
 
-    const optionId = option.getAttribute('data-list-id');
-    if (optionId === selectedListId) {
-      option.selected = true;
-      ;
-
-      //add card description
-      let card = list.tasks.find((task) => {
-        return task.id === selectedCardId;
-      });
-      textArea.value = card.text;
-    }
-  });
 }
+
+
 
 //save btn
 function saveCardTxt(currentCardDom, selectedListId, selectedCardId) {
@@ -685,6 +684,7 @@ function deleteCard(event) {
   });
 
   const listCards = selectedList.querySelectorAll('.assignment');
+
 
   let selectedcard = '';
 
@@ -891,8 +891,7 @@ function handelMemberMaking(data) {
         <button type="button" onclick="handelMemberMaking()" class="btn btn-primary">add</button>       
       </li>
     </ul>
-  </div>`
-
+  </div>`;
 
     for (let memberData of membersData) {
       createMember(memberData);
@@ -907,39 +906,6 @@ function handelMemberMaking(data) {
 console.info(appData);
 
 /** loading page functions */
-//json loading checker
-function isAllDataIsReady() {
-
-  if (appData.lists.length && appData.members.length) {
-    return true;
-  }
-  else {
-    return false
-  }
-}
-
-// JSON event listiner
-function reqListenerData(event) {
-
-  const target = event.target;
-  let data = JSON.parse(target.responseText);
-
-  appData.lists = data.board;
-
-  if (isAllDataIsReady()) {
-    handelPages();
-  }
-}
-function reqListenerMember(event) {
-
-  const target = event.target
-  let DataMembers = JSON.parse(target.responseText);
-
-  appData.members = DataMembers.members;
-  if (isAllDataIsReady()) {
-    handelPages();
-  }
-}
 
 //get the json data of pages
 function getBoardData() {
@@ -974,25 +940,6 @@ function selectedNavLink(page) {
   }
 }
 
-//generate page by hash
-function handelPages() {
-  const location = window.location.hash;
-
-  if (location === undefined || location !== '#Members' && location !== '#Board') {
-    window.location.hash = '#Board';
-
-  }
-  if (location === '#Members') {
-    handelMemberMaking(appData);
-    selectedNavLink('member');
-  }
-  if (location === '#Board') {
-
-    handelListMaking(appData.lists);
-    selectedNavLink('board');
-
-  }
-}
 
 //run json data on arrival to page
 function onArrival() {
@@ -1001,37 +948,4 @@ function onArrival() {
   getMemberData();
 }
 
-/*
-
- 2. First thing that should run is: `getBoardData` (instead of `checkUrlHash`).
- 3. When you get the board data, save it (e.g. `data.board`) under `appData.lists`
- 4. Then, call `checkUrlHash` (instead of building the lists)
- 5. When loading a page based on the hash, don’t call the `getBoardData`, just build the damn lists
- 6. When building the lists, use `appData.lists` (edited)
-
- {
- "members": [
- {
- "name": "Alex Ilyaev"
- },
- {
- "name": "Dima Vishnevetsky"
- },
- {
- "name": "Gil Tayar"
- },
- {
- "name": "yael kfir"
- },
- {
- "name": "adi siman-tov"
- }
- ]
- }
-
-
-
-
-
- */
 onArrival();

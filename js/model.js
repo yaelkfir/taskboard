@@ -53,6 +53,26 @@ function addMemberObjToAppData(memberDataId, membersInput) {
   appData.members.push(temMember);
 }
 
+function membersMaker(membersId, card) {
+  if (membersId.length > 0) {
+//add data-id to member span
+    const cardFooter = createElement('div', ['assignment-footer'], card);
+
+    for (let memberId of membersId) {
+
+      const userOnTask = createElement('span', ['user-icon', 'label', 'label-primary'], cardFooter);
+      appData.members.forEach((member) => {
+
+        if (member.id === memberId) {
+          let memberName = member.name
+          userOnTask.setAttribute('title', `${memberName}`);
+          userOnTask.innerHTML = getInishials(memberName);
+        }
+      });
+    }
+  }
+}
+
 
 //lists
 function addNewListToAppData(newList, listName) {
@@ -145,6 +165,13 @@ function saveMoveToListAppData(CardInAppData, moveToListId) {
     }
   });
 }
+
+function getLists(){
+  return appData.lists
+}
+
+
+
 //darg and drop
 function updateTaskOrder(dragedToListId,dragedToList,targetTaskId,draggedCardId) {
 
@@ -171,6 +198,11 @@ function updateTaskOrder(dragedToListId,dragedToList,targetTaskId,draggedCardId)
 
 
 //general func
+
+function getMembersFromAppData(){
+  return appData.members
+}
+
 function getCardDataById(ListId, CardId) {
   const ListData = appData.lists.find((list) => {
     return list.id === ListId;
@@ -199,4 +231,59 @@ function findCardByListInAppData(selectedListData, selectedCardId){
     return task.id === selectedCardId;
   });
   return CardData;
+}
+
+/** loading page functions */
+//json loading checker
+function isAllDataIsReady() {
+
+  if (appData.lists.length && appData.members.length) {
+    return true;
+  }
+  else {
+    return false
+  }
+}
+
+// JSON event listiner
+function reqListenerData(event) {
+
+  const target = event.target;
+  let data = JSON.parse(target.responseText);
+
+  appData.lists = data.board;
+
+  if (isAllDataIsReady()) {
+    handelPages();
+  }
+}
+function reqListenerMember(event) {
+
+  const target = event.target
+  let DataMembers = JSON.parse(target.responseText);
+
+  appData.members = DataMembers.members;
+  if (isAllDataIsReady()) {
+    handelPages();
+  }
+}
+
+//generate page by hash
+function handelPages() {
+  const location = window.location.hash;
+
+  if (location === undefined || location !== '#Members' && location !== '#Board') {
+    window.location.hash = '#Board';
+
+  }
+  if (location === '#Members') {
+    handelMemberMaking(appData);
+    selectedNavLink('member');
+  }
+  if (location === '#Board') {
+
+    handelListMaking(appData.lists);
+    selectedNavLink('board');
+
+  }
 }
