@@ -145,6 +145,7 @@ header .logo {
   padding: 15px;
   margin-bottom: 10px;
   border-radius: 5px;
+  height: 100%;
   display: flex;
   background-color: white;
   flex-direction: column;
@@ -159,8 +160,28 @@ header .logo {
 .assignment:focus > .card-edit-btn{
   display: block;
 }
+/*
+.fade li {
+  transition: all 0.4s ease-out;
+  opacity: 0;
+  height: 2em;
+}
+.fade li.show {
+  opacity: 1;
+}
+ */
+.assignment-before-transition{
+  transition: all 0.2s ease-out;
+  opacity: 0;
+  width: 100px;
+  transform: translateX(150px) ;
 
+}
 
+.assignment-after-transition{
+  opacity: 1;
+  width: 220px;
+}
 
 .add-list-btn-primary {
   width: 250px;
@@ -473,6 +494,32 @@ bottom :-20px;
   width: 380px;
 }
 
+.panel-before-transition{
+  transition: all 3s ease-out;
+
+  width:0;
+  height: 0;
+  opacity: 0;
+}
+/*
+  cardWraper.style.transition = "all 0.6s ease-out";
+  cardWraper.style.opacity = 1;
+  cardWraper.style.width = 220 +'px';
+  cardWraper.style.transform = 'translateX(0px)';
+
+  //remove class
+  cardWraper.classList.remove('assignment-before-transition');
+
+panel-before-transition
+
+panel:
+  width: 250px;
+  margin-right: 20px;
+  min-height: 200px;
+  height: 100%;
+  max-height: calc(100% - 50px);
+  position: relative;
+ */
 
 .members-list li:not(.add-new-member){
   display: flex;

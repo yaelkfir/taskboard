@@ -157,6 +157,43 @@ function handelListMaking(data) {
       }
     }
 
+    function handelTransition(obj){
+
+        newList.setAttribute('class','panel-before-transition');
+
+        newList.style.transition = "opacity 4s";
+        newList.style.opacity = 1;
+
+
+        /*
+         cardWraper.style.transition = "all 0.6s ease-out";
+
+         newList.style.width = 250 +'px';
+         newList.style.height = 100 +'%';
+         newList.style.transform = 'translateX(0px)';
+         cardWraper.style.opacity = 1;
+         cardWraper.style.width = 220 +'px';
+         cardWraper.style.transform = 'translateX(0px)';
+
+         //remove class
+         cardWraper.classList.remove('assignment-before-transition');
+
+         panel-before-transition
+
+         panel:
+         width: 250px;
+         margin-right: 20px;
+         min-height: 200px;
+         height: 100%;
+         max-height: calc(100% - 50px);
+         position: relative;
+         */
+
+        newList.setAttribute('class', 'panel panel-default');
+        newList.classList.remove('panel-before-transition');
+
+    }
+
     /*create the list*/
 
     const listsContainer = document.querySelector('main > div > div');
@@ -227,7 +264,9 @@ function handelListMaking(data) {
     listFooter.addEventListener("click", addNewCard);
 
     if (list === undefined) {
+
       addNewListToAppData(newList, listName);
+
     }
   }
 }
@@ -323,12 +362,15 @@ function addNewCard(event) {
   const parantSection = targetElement.closest('.panel-default');
   const parentSectionId = parantSection.getAttribute('data-id');
   const currentList = parantSection.querySelector('.flex-box');
-  const cardWraper = createElement('li', ['assignment'], currentList);
+  const cardWraper = createElement('li', ['assignment', 'assignment-before-transition'], currentList);
+
+
 
   const editBtn = createElement('button', ['card-edit-btn', 'btn', 'btn-info', 'btn-xs'], cardWraper);
   editBtn.textContent = 'Edit card';
   editBtn.addEventListener("click", toggleModal);
   const cardDiscription = createElement('p', ['card-description', 'p-no-margins'], cardWraper);
+
   cardDiscription.textContent = 'new card';
   const parntScroler = parantSection.querySelector('.over-flow-mask');
 
@@ -344,6 +386,33 @@ function addNewCard(event) {
   cardWraper.addEventListener("dragleave", dragLeave);
 
   addCardToListInAppData(cardId, cardDiscription, parentSectionId);
+
+  //add transition to added card
+  cardWraper.style.transition = "all 0.4s ease-out";
+  cardWraper.style.opacity = 1;
+  cardWraper.style.width = 220 +'px';
+  cardWraper.style.transform = 'translateX(0px)';
+
+  //remove class
+  cardWraper.classList.remove('assignment-before-transition');
+
+
+
+
+  // height = 0
+  //height =
+  /*
+   .fade li {
+   transition: all 0.4s ease-out;
+   opacity: 0;
+   height: 2em;
+   }
+   .fade li.show {
+   opacity: 1;
+   }
+
+   .style.transition = "all 2s"
+   */
 
 }
 
@@ -947,8 +1016,8 @@ function onArrival() {
   window.addEventListener('hashchange', handelPages);
 
   let LocalAppData = JSON.parse(localStorage.getItem('appData'));
+  //let LocalAppData = undefined;
 
-  console.info('local data const',LocalAppData);
   if(!LocalAppData){
     console.info('no local data');
 
@@ -959,11 +1028,9 @@ function onArrival() {
   if (LocalAppData){
 
     console.info('yes local data',LocalAppData);
-    console.info('is it the same?',appData);
 
     appData = LocalAppData;
 
-    console.info('yey! appData', appData);
 
     handelPages();
   }
