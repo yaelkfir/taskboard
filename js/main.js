@@ -1,6 +1,7 @@
 /**
  * Created by yaelo on 2/27/17.
  */
+//DOM
 
 const ENTER = 13;
 
@@ -66,6 +67,7 @@ function scrollTo(element, to, duration) {
     scrollTo(element, to, duration - 10);
   }, 10)
 }
+
 
 
 
@@ -351,7 +353,7 @@ function dragStart(e) {
 
   const draggedCardId = e.target.getAttribute('data-id');
   e.dataTransfer.setData("text/plain", draggedCardId);
-  e.target.style.opacity = 0.3;
+  e.target.style.opacity = 0.5;
   e.target.style.border = '3px solid #c8ecfd'
 }
 
@@ -568,6 +570,7 @@ function saveCardTxt(currentCardDom, selectedListId, selectedCardId) {
 
   //save change in AppData
   saveModalDiscription(selectedListId, selectedCardId, cardTxt);
+
 }
 
 function saveCardMembers(cardModal, currentCardDom, selectedListId, selectedCardId) {
@@ -630,6 +633,7 @@ function saveMoveToList(moveToList, selectedListId, currentCardBoard, currentCar
   }
 }
 
+//
 function saveCardHandler(event) {
 
   //get modal dom
@@ -902,9 +906,6 @@ function handelMemberMaking(data) {
   }
 }
 
-
-console.info(appData);
-
 /** loading page functions */
 
 //get the json data of pages
@@ -944,8 +945,30 @@ function selectedNavLink(page) {
 //run json data on arrival to page
 function onArrival() {
   window.addEventListener('hashchange', handelPages);
-  getBoardData();
-  getMemberData();
+
+  let LocalAppData = JSON.parse(localStorage.getItem('appData'));
+
+  console.info('local data const',LocalAppData);
+  if(!LocalAppData){
+    console.info('no local data');
+
+    getBoardData();
+    getMemberData();
+  }
+
+  if (LocalAppData){
+
+    console.info('yes local data',LocalAppData);
+    console.info('is it the same?',appData);
+
+    appData = LocalAppData;
+
+    console.info('yey! appData', appData);
+
+    handelPages();
+  }
 }
 
+
 onArrival();
+

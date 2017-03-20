@@ -1,4 +1,4 @@
-const appData = {
+let appData = {
   lists: [],
   members: []
 };
@@ -6,13 +6,19 @@ const appData = {
 
 //members
 function removeMemberFromAppDataMembers(memberDataId) {
+
   let currentMember = appData.members.find((member) => {
     return member.id === memberDataId;
   });
 
   const index = appData.members.indexOf(currentMember);
   appData.members.splice(index, 1);
+
   removeMemberFromAppDataCards(memberDataId);
+//LOCAL STORAGE
+  localStorage.setItem('appData',JSON.stringify(appData));
+  console.info(appData);
+
 }
 
 function removeMemberFromAppDataCards(memberDataId) {
@@ -28,12 +34,13 @@ function removeMemberFromAppDataCards(memberDataId) {
         if (memberDataId === member) {
           toRemoveMember = member;
           const index = members.indexOf(toRemoveMember);
-
           members.splice(index, 1);
         }
       });
     });
   });
+  localStorage.setItem('appData',JSON.stringify(appData));
+
 }
 
 function saveMemberEditingInAppData(memberDataId, memberInPut) {
@@ -43,6 +50,9 @@ function saveMemberEditingInAppData(memberDataId, memberInPut) {
   //find the currnt member index in appdata
 
   currentMember.name = `${memberInPut.value}`;
+
+  localStorage.setItem('appData',JSON.stringify(appData));
+
 }
 
 function addMemberObjToAppData(memberDataId, membersInput) {
@@ -51,6 +61,9 @@ function addMemberObjToAppData(memberDataId, membersInput) {
     name: `${membersInput.value}`
   };
   appData.members.push(temMember);
+
+  localStorage.setItem('appData',JSON.stringify(appData));
+
 }
 
 function membersMaker(membersId, card) {
@@ -69,8 +82,10 @@ function membersMaker(membersId, card) {
           userOnTask.innerHTML = getInishials(memberName);
         }
       });
+
     }
   }
+  localStorage.setItem('appData',JSON.stringify(appData));
 }
 
 
@@ -85,6 +100,11 @@ function addNewListToAppData(newList, listName) {
   }
   appData.lists.push(temList);
 
+  console.info(appData);
+
+  localStorage.setItem('appData',JSON.stringify(appData));
+  console.info(appData);
+
 }
 
 function removeListFromAppData(listSectionId) {
@@ -94,6 +114,9 @@ function removeListFromAppData(listSectionId) {
 
   const index = appData.lists.indexOf(currentList);
   appData.lists.splice(index, 1);
+
+  localStorage.setItem('appData',JSON.stringify(appData));
+
 }
 
 function changeListNameInAppData(listDataId, target) {
@@ -104,6 +127,9 @@ function changeListNameInAppData(listDataId, target) {
   const index = appData.lists.indexOf(currentList);
 
   appData.lists[index].title = target.value;
+
+  localStorage.setItem('appData',JSON.stringify(appData));
+
 }
 
 
@@ -120,8 +146,10 @@ function addCardToListInAppData(cardId, cardDiscription, parentSectionId) {
     if (list.id === parentSectionId) {
 
       list.tasks.push(tempCard);
+
     }
   }
+  localStorage.setItem('appData',JSON.stringify(appData));
 }
 
 
@@ -132,6 +160,10 @@ function saveModalDiscription(selectedListId, selectedCardId, cardTxt) {
   let selectedCardData = getCardDataById(selectedListId, selectedCardId);
   //change the discription
   selectedCardData.text = cardTxt.textContent;
+
+  localStorage.setItem('appData',JSON.stringify(appData));
+
+
 }
 
 function saveModalMembers(selectedListId, selectedCardId, temMembersArr) {
@@ -140,6 +172,9 @@ function saveModalMembers(selectedListId, selectedCardId, temMembersArr) {
   let selectedCardData = getCardDataById(selectedListId, selectedCardId);
   //change the members
   selectedCardData.members = temMembersArr;
+
+  localStorage.setItem('appData',JSON.stringify(appData));
+
 }
 
 function removeCardInAppData(selectedListId, selectedCardId) {
@@ -156,6 +191,8 @@ function removeCardInAppData(selectedListId, selectedCardId) {
   const index = selectedListData.tasks.indexOf(selectedCardData);
   selectedListData.tasks.splice(index, 1);
 
+  localStorage.setItem('appData',JSON.stringify(appData));
+
 }
 
 function saveMoveToListAppData(CardInAppData, moveToListId) {
@@ -164,12 +201,9 @@ function saveMoveToListAppData(CardInAppData, moveToListId) {
       list.tasks.push(CardInAppData);
     }
   });
-}
+  localStorage.setItem('appData',JSON.stringify(appData));
 
-function getLists(){
-  return appData.lists
 }
-
 
 
 //darg and drop
@@ -177,7 +211,6 @@ function updateTaskOrder(dragedToListId,dragedToList,targetTaskId,draggedCardId)
 
 
   const listInAppData = findListInAppData(dragedToListId);
-
 
   //get index of e.target card
 
@@ -194,10 +227,15 @@ function updateTaskOrder(dragedToListId,dragedToList,targetTaskId,draggedCardId)
   //put it in the right order
   listInAppData.tasks.splice(index,0,draggedCardInAppData);
 
+  localStorage.setItem('appData',JSON.stringify(appData));
+
 }
 
 
 //general func
+function getLists(){
+  return appData.lists
+}
 
 function getMembersFromAppData(){
   return appData.members
@@ -221,7 +259,7 @@ function findListInAppData(selectedListId){
     return list.id === selectedListId
   });
 
- return list;
+  return list;
 
 }
 
@@ -234,10 +272,14 @@ function findCardByListInAppData(selectedListData, selectedCardId){
 }
 
 /** loading page functions */
+
 //json loading checker
 function isAllDataIsReady() {
 
   if (appData.lists.length && appData.members.length) {
+
+    localStorage.setItem('appData',JSON.stringify(appData));
+
     return true;
   }
   else {
