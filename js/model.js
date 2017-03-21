@@ -4,9 +4,9 @@ const MODEL = (function () {
     lists: [],
     members: []
   };
-  //all func
+//all func
 
-  //members
+//members
   function removeMemberFromAppDataMembers(memberDataId) {
 
     let currentMember = appData.members.find((member) => {
@@ -68,7 +68,6 @@ const MODEL = (function () {
   }
 
 
-
 //lists
   function addNewListToAppData(newList, listName) {
     const listDataId = newList.getAttribute('data-id');
@@ -77,7 +76,7 @@ const MODEL = (function () {
       id: listDataId,
       title: `${listName.textContent}`,
       tasks: []
-    }
+    };
     appData.lists.push(temList);
 
 
@@ -168,19 +167,19 @@ const MODEL = (function () {
 
     removeFromAppData(selectedCardData, selectedListData, 'tasks');
 
-    function removeFromAppData(ElmtoRemove, fromElem, from){
+    function removeFromAppData(ElmtoRemove, fromElem, from) {
 
-      if(from === 'tasks'){
+      if (from === 'tasks') {
         const index = fromElem.tasks.indexOf(ElmtoRemove);
         fromElem.tasks.splice(index, 1);
       }
 
     }
 
-/*
- const index = selectedListData.tasks.indexOf(selectedCardData);
- selectedListData.tasks.splice(index, 1);
- */
+    /*
+     const index = selectedListData.tasks.indexOf(selectedCardData);
+     selectedListData.tasks.splice(index, 1);
+     */
     localStorage.setItem('appData', JSON.stringify(appData));
 
   }
@@ -197,7 +196,7 @@ const MODEL = (function () {
 
 
 //drag and drop
-  function updateTaskOrder(dragedToListId, dragedToList, targetTaskId, draggedCardId) {
+  function updateTaskOrder(dragedToListId, targetTaskId, draggedCardId) {
 
 
     const listInAppData = findListInAppData(dragedToListId);
@@ -210,7 +209,7 @@ const MODEL = (function () {
     const index = listInAppData.tasks.indexOf(targetedCardInAppData);
 
     //get the gradded card in appdata
-    const draggedCardInAppData = findCardByListInAppData(listInAppData, draggedCardId)
+    const draggedCardInAppData = findCardByListInAppData(listInAppData, draggedCardId);
     const index2 = listInAppData.tasks.indexOf(draggedCardInAppData);
 
     listInAppData.tasks.splice(index2, 1);
@@ -226,6 +225,7 @@ const MODEL = (function () {
   function getLists() {
     return appData.lists
   }
+
   function getAppData() {
     return appData;
   }
@@ -235,50 +235,43 @@ const MODEL = (function () {
   }
 
   function getCardDataById(ListId, CardId) {
-    const ListData = appData.lists.find((list) => {
+    let ListData = appData.lists.find((list) => {
       return list.id === ListId;
     });
 
-    const CardData = ListData.tasks.find((task) => {
+    return ListData.tasks.find((task) => {
       return task.id === CardId;
     });
-
-    return CardData;
   }
 
   function findListInAppData(selectedListId) {
 
-    const list = appData.lists.find((list) => {
+    return appData.lists.find((list) => {
       return list.id === selectedListId
     });
-
-    return list;
 
   }
 
   function findCardByListInAppData(selectedListData, selectedCardId) {
-    const CardData = selectedListData.tasks.find((task) => {
+    return selectedListData.tasks.find((task) => {
 
       return task.id === selectedCardId;
     });
-    return CardData;
   }
 
+
   /** loading page functions */
-  function saveToLocalStorage(){
+  function saveToLocalStorage() {
     localStorage.setItem('appData', JSON.stringify(appData));
 
   }
 
-  function appDataIsLocalData(LocalAppData){
+  function appDataIsLocalData(LocalAppData) {
     appData = LocalAppData;
   }
 
 
-
-
   return {
-    appDataIsLocalData:appDataIsLocalData,
     //members
     removeMemberFromAppDataMembers: removeMemberFromAppDataMembers,
 
@@ -287,7 +280,6 @@ const MODEL = (function () {
     saveMemberEditingInAppData: saveMemberEditingInAppData,
 
     addMemberObjToAppData: addMemberObjToAppData,
-
 
 
     //lists
@@ -317,7 +309,9 @@ const MODEL = (function () {
 
 
     //general func
-    getAppData:getAppData,
+    appDataIsLocalData: appDataIsLocalData,
+
+    getAppData: getAppData,
 
     getLists: getLists,
 
@@ -329,7 +323,7 @@ const MODEL = (function () {
 
     findCardByListInAppData: findCardByListInAppData,
 
-    saveToLocalStorage:saveToLocalStorage
+    saveToLocalStorage: saveToLocalStorage
   }
 
 })();

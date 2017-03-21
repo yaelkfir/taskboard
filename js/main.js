@@ -2,7 +2,7 @@
  * Created by yaelo on 2/27/17.
  */
 //DOM
-const VIEW = (function () {
+(function () {
   const ENTER = 13;
 
   /** general functions */
@@ -68,15 +68,204 @@ const VIEW = (function () {
     }, 10)
   }
 
+  //transition
+  function transition(elem, className, width) {
+
+    console.info('transition');
+
+    elem.style.transition = "all 0.2s ease-out";
+    elem.style.opacity = 1;
+    elem.style.width = width + 'px';
+    elem.style.transform = 'translateX(0px)';
+
+    if (elem.className === ' panel-before-transition') {
+      console.info('transition2');
+
+      elem.setAttribute('class', 'panel panel-default');
+    }
+    //remove class
+    elem.classList.remove(className);
+  }
+
 
   /** list functions */
 
-//create list
-  function addNewListBtnEventListiner(){
+  //add event listiners to list
+  function addListEventListiner() {
     const addListBtn = document.querySelector('.add-list-btn-primary')
-    addListBtn.addEventListener('click', ()=>{
+    addListBtn.addEventListener('click', () => {
       handelListMaking();
     })
+  }
+
+
+  //create list
+  function listBodyMaker(newList, list) {
+
+    //create the list content add it to dad and give class
+    const overFlowMask = createElement('div', ['over-flow-mask'], newList);
+
+    //create the list ul
+    const listUl = createElement('ul', ['flex-box'], overFlowMask);
+    //darg&drop
+    listUl.addEventListener("dragover", allowDrop);
+    listUl.addEventListener("drop", dropCard);
+
+    handelCards(list);
+
+    function handelCards(obj, task) {
+
+      if (obj !== undefined) {
+        let tasks = obj.tasks;
+
+        for (task of tasks) {
+
+          //create card wraper and appand to dad ul
+          const cardWraper = createElement('li', ['assignment'], listUl);
+          cardWraper.tabIndex = '0';
+
+          cardWraper.setAttribute('data-id', `${task.id}`);
+          cardWraper.setAttribute('draggable', "true");
+
+          cardWraper.addEventListener('dragstart', dragStart);
+          cardWraper.addEventListener("dragend", dargEnd);
+          cardWraper.addEventListener("dragover", dragOver);
+          cardWraper.addEventListener("dragleave", dragLeave);
+          //create edit btn and appand to dad ul
+          const editBtn = createElement('button', ['card-edit-btn', 'btn', 'btn-info', 'btn-xs'], cardWraper);
+          editBtn.textContent = 'Edit card';
+          editBtn.addEventListener("click", toggleModal);
+
+          //create interactive task description
+          const cardDiscription = createElement('p', ['card-description', 'p-no-margins'], cardWraper);
+
+          cardDiscription.textContent = task.text;
+
+          //loop the member
+
+          membersMaker(task.members, cardWraper);
+
+        }
+      }
+    }
+  }
+
+  function listFooterMaker(list) {
+    //create the list footer add it to dad and give class
+    const listFooter = createElement('div', ['panel-footer', 'list-footer'], list);
+    listFooter.tabIndex = '0';
+
+    // highlight potential drop target when the draggable element enters it
+
+
+    //create the add card btn in footer and give class and onclick
+    const addCardBtn = createElement('span', ['panel-footer-btn'], listFooter);
+
+    addCardBtn.innerHTML = `
+      <span class="padding-right glyphicon glyphicon-plus"></span>Add New Card`;
+    listFooter.addEventListener("click", addNewCard);
+  }
+
+  function listHeadMaker(listName, listHead) {
+
+    listName.tabIndex = '0';
+
+    listName.addEventListener("click", changeListName);
+    listName.addEventListener('keydown', changeListName);
+
+    const titelInPut = createElement('input', ['list-name-input'], listHead);
+
+    titelInPut.setAttribute("value", `${listName.innerHTML}`);
+    titelInPut.style.display = "none";
+
+    titelInPut.addEventListener("blur", saveListName);
+    titelInPut.addEventListener('keydown', saveListName);
+
+    //create the editBtn container
+    const editBtnContainer = createElement('div', ['btn-group'], listHead);
+
+    editBtnContainer.innerHTML = `
+              <button type="button" class="delete-btn btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="smaller-glyphicon glyphicon glyphicon-triangle-bottom"></span>
+            </button>
+            <ul class="ul-drop-down dropdown-menu">
+              <li><a href="#"><span class="padding-right glyphicon glyphicon-trash
+                "></span>Delete</a></li>
+            </ul>
+`;
+    //target btn and add events
+    const editBtn = editBtnContainer.querySelector('button');
+    const deleteLi = editBtnContainer.querySelector('li');
+
+    addEventListeners([editBtn], ['click', 'blur', 'keydown'], handelDropDown);
+    addEventListeners([deleteLi], ['mousedown'], deleteList);
+
+
+  }
+
+  function createList(list) {
+
+    function handelListName(obj) {
+
+      if (obj !== undefined) {
+        listName.innerHTML = obj.title;
+
+      }
+      else {
+        listName.innerHTML = "brand new list";
+      }
+    }
+
+    function handelListClass(obj) {
+
+      if (obj !== undefined) {
+        return createElement('section', ['panel panel-default'], listsContainer);
+
+      }
+      else {
+
+        return createElement('section', ['panel-before-transition'], listsContainer);
+
+      }
+    }
+
+    function handelListId(obj) {
+
+      if (obj !== undefined) {
+        newList.setAttribute('data-id', list.id);
+      }
+      else {
+        newList.setAttribute('data-id', uuid());
+      }
+    }
+
+    /*create the list*/
+
+    const listsContainer = document.querySelector('main > div > div');
+
+    let newList = handelListClass(list);
+
+    const listHead = createElement('div', ['panel-heading, task-name-wraper'], newList);
+    const listName = createElement('h3', ['panel-title'], listHead);
+
+    transition(newList, 'panel-before-transition', 250);
+
+    handelListId(list);
+
+    listHeadMaker(listName, listHead);
+
+    handelListName(list);
+
+    listBodyMaker(newList, list);
+
+    listFooterMaker(newList);
+
+    if (list === undefined) {
+
+      MODEL.addNewListToAppData(newList, listName);
+
+    }
+
   }
 
   function handelListMaking(data) {
@@ -104,180 +293,11 @@ const VIEW = (function () {
       createList();
     }
 
-    function createList(list) {
 
-      function handelListName(obj) {
-
-        if (obj !== undefined) {
-          listName.innerHTML = obj.title;
-
-        }
-        else {
-          listName.innerHTML = "brand new list";
-        }
-      }
-
-      function handelCards(obj, task) {
-
-        if (obj !== undefined) {
-          let tasks = obj.tasks;
-
-          for (task of tasks) {
-
-            //create card wraper and appand to dad ul
-            const cardWraper = createElement('li', ['assignment'], listUl);
-            cardWraper.tabIndex = '0';
-            cardWraper.setAttribute('data-id', `${task.id}`);
-            cardWraper.setAttribute('draggable', "true");
-
-            cardWraper.addEventListener('dragstart', dragStart);
-            cardWraper.addEventListener("dragend", dargEnd);
-            cardWraper.addEventListener("dragover", dragOver);
-            cardWraper.addEventListener("dragleave", dragLeave);
-            //create edit btn and appand to dad ul
-            const editBtn = createElement('button', ['card-edit-btn', 'btn', 'btn-info', 'btn-xs'], cardWraper);
-            editBtn.textContent = 'Edit card';
-            editBtn.addEventListener("click", toggleModal);
-
-            //create interactive task description
-            const cardDiscription = createElement('p', ['card-description', 'p-no-margins'], cardWraper);
-
-            cardDiscription.textContent = task.text;
-
-            //loop the member
-
-            membersMaker(task.members, cardWraper);
-
-          }
-        }
-      }
-
-      function handelListId(obj) {
-
-        if (obj !== undefined) {
-          newList.setAttribute('data-id', list.id);
-        }
-        else {
-          newList.setAttribute('data-id', uuid());
-        }
-      }
-
-      function handelTransition(obj) {
-
-        newList.setAttribute('class', 'panel-before-transition');
-
-        newList.style.transition = "opacity 4s";
-        newList.style.opacity = 1;
-
-
-        /*
-         cardWraper.style.transition = "all 0.6s ease-out";
-
-         newList.style.width = 250 +'px';
-         newList.style.height = 100 +'%';
-         newList.style.transform = 'translateX(0px)';
-         cardWraper.style.opacity = 1;
-         cardWraper.style.width = 220 +'px';
-         cardWraper.style.transform = 'translateX(0px)';
-
-         //remove class
-         cardWraper.classList.remove('assignment-before-transition');
-
-         panel-before-transition
-
-         panel:
-         width: 250px;
-         margin-right: 20px;
-         min-height: 200px;
-         height: 100%;
-         max-height: calc(100% - 50px);
-         position: relative;
-         */
-
-        newList.setAttribute('class', 'panel panel-default');
-        newList.classList.remove('panel-before-transition');
-
-      }
-
-      /*create the list*/
-
-      const listsContainer = document.querySelector('main > div > div');
-
-      const newList = createElement('section', ['panel panel-default'], listsContainer);
-
-      const listHead = createElement('div', ['panel-heading, task-name-wraper'], newList);
-
-      const listName = createElement('h3', ['panel-title'], listHead);
-
-      handelListId(list);
-      handelListName(list);
-      listName.tabIndex = '0';
-
-      listName.addEventListener("click", changeListName);
-      listName.addEventListener('keydown', changeListName);
-
-      const titelInPut = createElement('input', ['list-name-input'], listHead);
-
-      titelInPut.setAttribute("value", `${listName.innerHTML}`);
-      titelInPut.style.display = "none";
-
-      titelInPut.addEventListener("blur", saveListName);
-      titelInPut.addEventListener('keydown', saveListName);
-
-      //create the editBtn container
-      const editBtnContainer = createElement('div', ['btn-group'], listHead);
-
-      editBtnContainer.innerHTML = `
-              <button type="button" class="delete-btn btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <span class="smaller-glyphicon glyphicon glyphicon-triangle-bottom"></span>
-            </button>
-            <ul class="ul-drop-down dropdown-menu">
-              <li><a href="#"><span class="padding-right glyphicon glyphicon-trash
-                "></span>Delete</a></li>
-            </ul>
-`;
-      //target btn and add events
-      const editBtn = editBtnContainer.querySelector('button');
-      const deleteLi = editBtnContainer.querySelector('li');
-
-      addEventListeners([editBtn], ['click', 'blur', 'keydown'], handelDropDown);
-      addEventListeners([deleteLi], ['mousedown'], deleteList);
-
-      //create the list content add it to dad and give class
-      const overFlowMask = createElement('div', ['over-flow-mask'], newList);
-
-      //create the list ul
-      const listUl = createElement('ul', ['flex-box'], overFlowMask);
-      handelCards(list);
-      //create the list footer add it to dad and give class
-      const listFooter = createElement('div', ['panel-footer', 'list-footer'], newList);
-      listFooter.tabIndex = '0';
-
-      //darg&drop
-
-      listUl.addEventListener("dragover", allowDrop);
-      listUl.addEventListener("drop", dropCard);
-
-      // highlight potential drop target when the draggable element enters it
-
-
-      //create the add card btn in footer and give class and onclick
-      const addCardBtn = createElement('span', ['panel-footer-btn'], listFooter);
-
-      addCardBtn.innerHTML = `
-<span class="padding-right glyphicon glyphicon-plus"></span>Add New Card`;
-      listFooter.addEventListener("click", addNewCard);
-
-      if (list === undefined) {
-
-        MODEL.addNewListToAppData(newList, listName);
-
-      }
-    }
   }
 
 
-//events
+  //list events
   function deleteList(event) {
 
     //target the list
@@ -384,6 +404,7 @@ const VIEW = (function () {
     cardWraper.setAttribute('data-id', `${cardId}`);
 
     cardWraper.setAttribute('draggable', "true");
+
     cardWraper.addEventListener('dragstart', dragStart);
     cardWraper.addEventListener("dragend", dargEnd);
     cardWraper.addEventListener("dragover", dragOver);
@@ -392,34 +413,11 @@ const VIEW = (function () {
     MODEL.addCardToListInAppData(cardId, cardDiscription, parentSectionId);
 
     //add transition to added card
-    cardWraper.style.transition = "all 0.3s ease-out";
-    cardWraper.style.opacity = 1;
-    cardWraper.style.width = 220 + 'px';
-    cardWraper.style.transform = 'translateX(0px)';
-
-    //remove class
-    cardWraper.classList.remove('assignment-before-transition');
-
-
-    // height = 0
-    //height =
-    /*
-     .fade li {
-     transition: all 0.4s ease-out;
-     opacity: 0;
-     height: 2em;
-     }
-     .fade li.show {
-     opacity: 1;
-     }
-
-     .style.transition = "all 2s"
-     */
+    transition(cardWraper, 'assignment-before-transition', 220);
 
   }
 
-//drag & drop
-
+  //drag & drop
   function dragStart(e) {
 
     const draggedCardId = e.target.getAttribute('data-id');
@@ -634,18 +632,19 @@ const VIEW = (function () {
     const closeBtns = modal.querySelectorAll('.close-modal');
     const saveBtn = modal.querySelector('.save-changes');
     const deleteBtn = modal.querySelector('.delete-card');
+    console.info(saveBtn);
 
-    closeBtns.forEach((btn)=>{
-    btn.addEventListener("click",toggleModal);
+    closeBtns.forEach((btn) => {
+      btn.addEventListener("click", toggleModal);
 
-});
+    });
     saveBtn.addEventListener("click", saveCardHandler);
 
     deleteBtn.addEventListener('click', deleteCard);
-}
+  }
 
 
-//save btn
+  //save btn
   function saveCardTxt(currentCardDom, selectedListId, selectedCardId) {
 
     //save DOM elements
@@ -718,7 +717,6 @@ const VIEW = (function () {
     }
   }
 
-//
   function saveCardHandler(event) {
 
     //get modal dom
@@ -755,7 +753,7 @@ const VIEW = (function () {
 
   }
 
-//delete btn
+
   function deleteCard(event) {
     const cardModal = document.querySelector('.light-box');
     const selectedCardId = cardModal.getAttribute('data-card');
@@ -793,7 +791,6 @@ const VIEW = (function () {
 
   }
 
-//close + edit btn
   function toggleModal(event) {
     //get modal dom element
     const cardModal = document.querySelector('.light-box');
@@ -814,7 +811,8 @@ const VIEW = (function () {
 
 
   /** member functions */
-  function addMemberEventLisiner(){
+
+  function addMemberEventLisiner() {
     const addMemberBtn = document.querySelector('.add-member-btn');
     addMemberBtn.addEventListener('click', () => {
       handelMemberMaking();
@@ -842,7 +840,6 @@ const VIEW = (function () {
     }
   }
 
-//open edit name mode
   function changeMember(event) {
 
     const currentTarget = event.target;
@@ -862,7 +859,6 @@ const VIEW = (function () {
 
   }
 
-//close edit name mode
   function cancelMemberEditing(event) {
     const target = event.target
 
@@ -880,7 +876,6 @@ const VIEW = (function () {
     editBtnContainer.classList.toggle('display-none');
   }
 
-//save changed name
   function saveMemberEditing(event) {
     const target = event.target
 
@@ -905,7 +900,6 @@ const VIEW = (function () {
     }
   }
 
-//add/remove members
   function DeleteMember(event) {
     const target = event.target;
     const membersList = document.querySelector('.members-list');
@@ -1018,11 +1012,11 @@ const VIEW = (function () {
     }
   }
 
+
   /** loading page functions */
 
-//json loading checker
+  //json loading/local storage checker
   function isAllDataIsReady() {
-
 
     if (MODEL.getAppData().lists.length && MODEL.getAppData().members.length) {
 
@@ -1034,7 +1028,8 @@ const VIEW = (function () {
       return false
     }
   }
-//get the json data of pages
+
+  //get the json data of pages
   function getBoardData() {
     const oReq = new XMLHttpRequest();
     oReq.addEventListener("load", reqListenerData);
@@ -1050,7 +1045,7 @@ const VIEW = (function () {
 
   }
 
-//change the selcted li in nav bar by hash
+  //change the selcted li in nav bar by hash
   function selectedNavLink(page) {
 
     const navbar = document.querySelector('.navbar-nav');
@@ -1068,7 +1063,7 @@ const VIEW = (function () {
   }
 
 
-// JSON event listiner
+  // JSON event listiner
   function reqListenerData(event) {
 
     const target = event.target;
@@ -1084,17 +1079,22 @@ const VIEW = (function () {
 
   function reqListenerMember(event) {
 
-    const target = event.target
+    //called when there's no local storage
+
+    //get the json
+    const target = event.target;
     let DataMembers = JSON.parse(target.responseText);
 
+    //set the app data without using appData
     const dataOfapp = MODEL.getAppData();
     dataOfapp.members = DataMembers.members;
+
     if (isAllDataIsReady()) {
       handelPages();
     }
   }
 
-//generate page by hash
+  //generate page by hash
   function handelPages() {
     const location = window.location.hash;
 
@@ -1110,19 +1110,21 @@ const VIEW = (function () {
       selectedNavLink('member');
 
       addMemberEventLisiner();
-    }
 
+    }
     if (location === '#Board') {
 
       let appDataLists = MODEL.getLists();
       handelListMaking(appDataLists);
-      addModalEvents();
+
       selectedNavLink('board');
 
-      addNewListBtnEventListiner();
+      addModalEvents();
+      addListEventListiner();
     }
   }
-//run json data on arrival to page
+
+  //run json data on arrival to page
   function onArrival() {
 
     window.addEventListener('hashchange', handelPages);
@@ -1132,18 +1134,16 @@ const VIEW = (function () {
 
     if (LocalAppData) {
       console.info('yes local data', LocalAppData);
-
       MODEL.appDataIsLocalData(LocalAppData);
-
       handelPages();
     }
 
     else {
       console.info('no local data');
-
       getBoardData();
       getMemberData();
     }
   }
+
   onArrival();
 })();
