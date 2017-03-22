@@ -78,11 +78,6 @@
     elem.style.width = width + 'px';
     elem.style.transform = 'translateX(0px)';
 
-    if (elem.className === ' panel-before-transition') {
-      console.info('transition2');
-
-      elem.setAttribute('class', 'panel panel-default');
-    }
     //remove class
     elem.classList.remove(className);
   }
@@ -224,7 +219,7 @@
       }
       else {
 
-        return createElement('section', ['panel-before-transition'], listsContainer);
+        return createElement('section', ['new-panel panel panel-default'], listsContainer);
 
       }
     }
@@ -247,8 +242,6 @@
 
     const listHead = createElement('div', ['panel-heading, task-name-wraper'], newList);
     const listName = createElement('h3', ['panel-title'], listHead);
-
-    transition(newList, 'panel-before-transition', 250);
 
     handelListId(list);
 
@@ -292,8 +285,6 @@
     else {
       createList();
     }
-
-
   }
 
 
@@ -309,7 +300,36 @@
 
     const r = confirm(`Deleting ${listTitle} list. Are you sure?`);
     if (r === true) {
-      listsContainer.removeChild(listSection);
+
+  $(listSection).animate({
+    opacity:0,
+    width:0
+  }, 300, function () {
+    listsContainer.removeChild(listSection);
+  });
+
+
+
+
+
+
+
+      /*
+
+       $( "#clickme" ).click(function() {
+       $( "#book" ).animate({
+       opacity: 0.25,
+       left: "+=50",
+       height: "toggle"
+       }, 5000, function() {
+       // Animation complete.
+       });
+       });
+
+ */
+
+
+
       //remove list from appData
       MODEL.removeListFromAppData(listSectionId);
     }
@@ -1129,8 +1149,8 @@
 
     window.addEventListener('hashchange', handelPages);
 
-    let LocalAppData = JSON.parse(localStorage.getItem('appData'));
-    //let LocalAppData = undefined;
+    //let LocalAppData = JSON.parse(localStorage.getItem('appData'));
+    let LocalAppData = undefined;
 
     if (LocalAppData) {
       console.info('yes local data', LocalAppData);

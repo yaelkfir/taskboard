@@ -195,6 +195,8 @@ header .logo {
   font-weight: 600;
   letter-spacing: 0.8px;
   text-transform: capitalize;
+  transform: translateX(0);
+  transition: all 400ms;
 }
 
 
@@ -498,10 +500,8 @@ bottom :-20px;
 .panel-before-transition{
 
   transition: all 0.2s ease-out;
-  width:0;
-  opacity: 0;
-  transform: translateX(150px) ;
-
+  width:250px;
+  opacity: 1;
 }
 
 /*
@@ -532,10 +532,13 @@ panel-before-transition
   padding: 0 15px;
 }
 
+
 .add-new-member{
   display: flex;
   height: 60px;
 }
+
+
 .edit-member-btn-container,
 .btn-container{
   display: none;
