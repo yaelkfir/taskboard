@@ -252,6 +252,16 @@
 
     listFooterMaker(newList);
 
+    $('.new-panel h3').fadeIn(200);
+    $('.new-panel span').fadeIn(200);
+
+    $(newList).animate({
+      width: 250,
+      opacity: 1
+    }, 200, function () {
+      newList.classList.remove('new-panel');
+    });
+
     if (list === undefined) {
 
       MODEL.addNewListToAppData(newList, listName);
