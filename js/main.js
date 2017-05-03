@@ -1138,8 +1138,8 @@
 
     window.addEventListener('hashchange', handelPages);
 
-    // let LocalAppData = JSON.parse(localStorage.getItem('appData'));
-    let LocalAppData = undefined;
+    let LocalAppData = JSON.parse(localStorage.getItem('appData'));
+    // let LocalAppData = undefined;
 
     if (LocalAppData) {
       MODEL.appDataIsLocalData(LocalAppData);
