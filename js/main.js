@@ -1,6 +1,3 @@
-/**
- * Created by yaelo on 2/27/17.
- */
 //DOM
 (function () {
   const ENTER = 13;
@@ -44,34 +41,39 @@
     }
   }
 
-  function getInishials(str) {
+  function getInitials(str) {
 
     const strArr = str.split(' ');
     const twoWordArr = [];
     for (const smallStr of strArr) {
-      const letter = smallStr[0];
 
+      const letter = smallStr[0];
       twoWordArr.push(letter);
+
     }
+
     return twoWordArr.join('');
   }
 
   function scrollTo(element, to, duration) {
-    if (duration <= 0) return;
+
+    if (duration <= 0) {
+      return;
+    }
     const difference = to - element.scrollTop;
     const perTick = difference / duration * 10;
 
     setTimeout(function () {
       element.scrollTop = element.scrollTop + perTick;
-      if (element.scrollTop == to) return;
+      if (element.scrollTop == to) {
+        return;
+      }
       scrollTo(element, to, duration - 10);
     }, 10)
   }
 
   //transition
   function transition(elem, className, width) {
-
-    console.info('transition');
 
     elem.style.transition = "all 0.2s ease-out";
     elem.style.opacity = 1;
@@ -85,14 +87,13 @@
 
   /** list functions */
 
-  //add event listiners to list
-  function addListEventListiner() {
+  //add event listeners to list
+  function addListEventListener() {
     const addListBtn = document.querySelector('.add-list-btn-primary')
     addListBtn.addEventListener('click', () => {
       handelListMaking();
     })
   }
-
 
   //create list
   function listBodyMaker(newList, list) {
@@ -102,7 +103,7 @@
 
     //create the list ul
     const listUl = createElement('ul', ['flex-box'], overFlowMask);
-    //darg&drop
+    //drag&drop
     listUl.addEventListener("dragover", allowDrop);
     listUl.addEventListener("drop", dropCard);
 
@@ -122,10 +123,11 @@
           cardWraper.setAttribute('data-id', `${task.id}`);
           cardWraper.setAttribute('draggable', "true");
 
-          cardWraper.addEventListener('dragstart', dragStart);
-          cardWraper.addEventListener("dragend", dargEnd);
-          cardWraper.addEventListener("dragover", dragOver);
-          cardWraper.addEventListener("dragleave", dragLeave);
+
+          cardWraper.addEventListener('dragstart', dragstart);
+          cardWraper.addEventListener("dragend", dragend);
+          cardWraper.addEventListener("dragover", dragover);
+          cardWraper.addEventListener("dragleave", dragleave);
           //create edit btn and appand to dad ul
           const editBtn = createElement('button', ['card-edit-btn', 'btn', 'btn-info', 'btn-xs'], cardWraper);
           editBtn.textContent = 'Edit card';
@@ -150,9 +152,6 @@
     const listFooter = createElement('div', ['panel-footer', 'list-footer'], list);
     listFooter.tabIndex = '0';
 
-    // highlight potential drop target when the draggable element enters it
-
-
     //create the add card btn in footer and give class and onclick
     const addCardBtn = createElement('span', ['panel-footer-btn'], listFooter);
 
@@ -168,13 +167,13 @@
     listName.addEventListener("click", changeListName);
     listName.addEventListener('keydown', changeListName);
 
-    const titelInPut = createElement('input', ['list-name-input'], listHead);
+    const titleInPut = createElement('input', ['list-name-input'], listHead);
 
-    titelInPut.setAttribute("value", `${listName.innerHTML}`);
-    titelInPut.style.display = "none";
+    titleInPut.setAttribute("value", `${listName.innerHTML}`);
+    titleInPut.style.display = "none";
 
-    titelInPut.addEventListener("blur", saveListName);
-    titelInPut.addEventListener('keydown', saveListName);
+    titleInPut.addEventListener("blur", saveListName);
+    titleInPut.addEventListener('keydown', saveListName);
 
     //create the editBtn container
     const editBtnContainer = createElement('div', ['btn-group'], listHead);
@@ -203,11 +202,11 @@
     function handelListName(obj) {
 
       if (obj !== undefined) {
-        listName.innerHTML = obj.title;
+        listName.textContent = obj.title;
 
       }
       else {
-        listName.innerHTML = "brand new list";
+        listName.textContent = "brand new list";
       }
     }
 
@@ -253,6 +252,16 @@
 
     listFooterMaker(newList);
 
+    $('.new-panel h3').fadeIn(200);
+    $('.new-panel span').fadeIn(200);
+
+    $(newList).animate({
+      width: 250,
+      opacity: 1
+    }, 200, function () {
+      newList.classList.remove('new-panel');
+    });
+
     if (list === undefined) {
 
       MODEL.addNewListToAppData(newList, listName);
@@ -287,7 +296,6 @@
     }
   }
 
-
   //list events
   function deleteList(event) {
 
@@ -301,35 +309,16 @@
     const r = confirm(`Deleting ${listTitle} list. Are you sure?`);
     if (r === true) {
 
-  $(listSection).animate({
-    opacity:0,
-    width:0
-  }, 300, function () {
-    listsContainer.removeChild(listSection);
-  });
+      $(`[data-id ='${listSectionId}'] p`).fadeOut(10);
+      $(`[data-id ='${listSectionId}'] h3`).fadeOut(10);
+      $(`[data-id ='${listSectionId}'] span`).fadeOut(10);
 
-
-
-
-
-
-
-      /*
-
-       $( "#clickme" ).click(function() {
-       $( "#book" ).animate({
-       opacity: 0.25,
-       left: "+=50",
-       height: "toggle"
-       }, 5000, function() {
-       // Animation complete.
-       });
-       });
-
- */
-
-
-
+      $(listSection).animate({
+        opacity: 0,
+        width: 0
+      }, 200, function () {
+        listsContainer.removeChild(listSection);
+      });
       //remove list from appData
       MODEL.removeListFromAppData(listSectionId);
     }
@@ -342,9 +331,12 @@
       const currentPanelHeader = currentTarget.parentNode;
       //target the input
 
+
       const titleInPut = currentPanelHeader.querySelector('input');
       titleInPut.style.display = 'block';
       titleInPut.focus();
+
+      titleInPut.value = currentTarget.textContent;
 
       //hide title
       currentTarget.style.display = 'none';
@@ -400,45 +392,44 @@
 
   function addNewCard(event) {
 
-//scroll to the lest card added.
     const targetElement = event.target;
     targetElement.blur();
 
-    const parantSection = targetElement.closest('.panel-default');
-    const parentSectionId = parantSection.getAttribute('data-id');
-    const currentList = parantSection.querySelector('.flex-box');
-    const cardWraper = createElement('li', ['assignment', 'assignment-before-transition'], currentList);
+    const parentSection = targetElement.closest('.panel-default');
+    const parentSectionId = parentSection.getAttribute('data-id');
+    const currentList = parentSection.querySelector('.flex-box');
+    const cardWrapper = createElement('li', ['assignment', 'assignment-before-transition'], currentList);
 
 
-    const editBtn = createElement('button', ['card-edit-btn', 'btn', 'btn-info', 'btn-xs'], cardWraper);
+    const editBtn = createElement('button', ['card-edit-btn', 'btn', 'btn-info', 'btn-xs'], cardWrapper);
     editBtn.textContent = 'Edit card';
     editBtn.addEventListener("click", toggleModal);
-    const cardDiscription = createElement('p', ['card-description', 'p-no-margins'], cardWraper);
+    const cardDescription = createElement('p', ['card-description', 'p-no-margins'], cardWrapper);
 
-    cardDiscription.textContent = 'new card';
-    const parntScroler = parantSection.querySelector('.over-flow-mask');
+    cardDescription.textContent = 'new card';
+    const parentScroll = parentSection.querySelector('.over-flow-mask');
 
 
-    scrollTo(parntScroler, parntScroler.scrollHeight, 300);
+    scrollTo(parentScroll, parentScroll.scrollHeight, 300);
     const cardId = uuid();
-    cardWraper.setAttribute('data-id', `${cardId}`);
+    cardWrapper.setAttribute('data-id', `${cardId}`);
 
-    cardWraper.setAttribute('draggable', "true");
+    cardWrapper.setAttribute('draggable', "true");
 
-    cardWraper.addEventListener('dragstart', dragStart);
-    cardWraper.addEventListener("dragend", dargEnd);
-    cardWraper.addEventListener("dragover", dragOver);
-    cardWraper.addEventListener("dragleave", dragLeave);
+    cardWrapper.addEventListener('dragstart', dragstart);
+    cardWrapper.addEventListener("dragend", dragend);
+    cardWrapper.addEventListener("dragover", dragover);
+    cardWrapper.addEventListener("dragleave", dragleave);
 
-    MODEL.addCardToListInAppData(cardId, cardDiscription, parentSectionId);
+    MODEL.addCardToListInAppData(cardId, cardDescription, parentSectionId);
 
     //add transition to added card
-    transition(cardWraper, 'assignment-before-transition', 220);
+    transition(cardWrapper, 'assignment-before-transition', 220);
 
   }
 
   //drag & drop
-  function dragStart(e) {
+  function dragstart(e) {
 
     const draggedCardId = e.target.getAttribute('data-id');
     e.dataTransfer.setData("text/plain", draggedCardId);
@@ -446,7 +437,7 @@
     e.target.style.border = '3px solid #c8ecfd'
   }
 
-  function dragOver(e) {
+  function dragover(e) {
     const target = e.target;
     if (e.target.className !== " flex-box") {
       if (target.className !== 'assignment') {
@@ -460,7 +451,7 @@
     }
   }
 
-  function dragLeave(e) {
+  function dragleave(e) {
     const target = e.target;
 
     if (e.target.className !== " flex-box") {
@@ -476,7 +467,7 @@
     }
   }
 
-  function dargEnd(e) {
+  function dragend(e) {
     e.target.style.opacity = 1;
     e.target.style.border = '1px solid #c8ecfd'
 
@@ -489,7 +480,7 @@
   function dropCard(e) {
 
     e.preventDefault();
-// get needed data from to in order to save the card in the dragged to list in app data
+    // get needed data from to in order to save the card in the dragged to list in app data
     const draggedCardId = e.dataTransfer.getData("text/plain");
     const dragedCard = document.querySelector(`[data-id = '${draggedCardId}']`);
     const dragedToList = e.target.closest('.panel');
@@ -507,19 +498,19 @@
       if (oldListId !== dragedToListId) {
 
         const targetTask = e.target.closest('.assignment');
-        targetTask.style.borderTop = '1px solid #c8ecfd'
-        dragedCard.style.borderTop = '1px solid #c8ecfd'
+        targetTask.style.borderTop = '1px solid #c8ecfd';
+        dragedCard.style.borderTop = '1px solid #c8ecfd';
 
         const targetTaskId = targetTask.getAttribute('data-id');
 
         ulList.insertBefore(dragedCard, targetTask);
 
-        //apdate list in appdata MODEL.saveMoveToListAppData(CardInAppData, moveToListId)
+        //update list in app data MODEL.saveMoveToListAppData(CardInAppData, moveToListId)
         MODEL.saveMoveToListAppData(draggedCardInAppData, dragedToListId);
 
-        MODEL.updateTaskOrder(dragedToListId, dragedToList, targetTaskId, draggedCardId);
+        MODEL.updateTaskOrder(dragedToListId, targetTaskId, draggedCardId);
 
-        //remove from prev list in appdata
+        //remove from prev list in app data
         MODEL.removeCardInAppData(oldListId, draggedCardId);
 
 
@@ -534,10 +525,7 @@
 
         ulList.insertBefore(dragedCard, targetTask);
 
-        //save new task order to appdata
-//get the tasks order from dom
-
-        MODEL.updateTaskOrder(dragedToListId, dragedToList, targetTaskId, draggedCardId);
+        MODEL.updateTaskOrder(dragedToListId, targetTaskId, draggedCardId);
       }
 
     }
@@ -549,14 +537,14 @@
       ulList.insertBefore(dragedCard, targetTask)
 
       const scrollerContainer = ulList.closest('.over-flow-mask');
-      //get the e targt
+      //get the e target
       scrollTo(scrollerContainer, scrollerContainer.scrollHeight, 300);
 
 
-      //apdate list in appdata MODEL.saveMoveToListAppData(CardInAppData, moveToListId)
+      //update list in app data MODEL.saveMoveToListAppData(CardInAppData, moveToListId)
       MODEL.saveMoveToListAppData(draggedCardInAppData, dragedToListId);
 
-      //remove from prev list in appdata
+      //remove from prev list in app data
       MODEL.removeCardInAppData(oldListId, draggedCardId);
 
     }
@@ -599,7 +587,7 @@
     });
   }
 
-  function getListsandTxtToModal(moveToList, selectedListId, selectedCardId, textArea) {
+  function getListsAndTxtToModal(moveToList, selectedListId, selectedCardId, textArea) {
     const lists = MODEL.getLists();
 
     lists.forEach((list) => {
@@ -643,7 +631,7 @@
     getMembersToModal(membersList, selectedCardData);
 
     //fill move-to options and text area content
-    getListsandTxtToModal(moveToList, selectedListId, selectedCardId, textArea);
+    getListsAndTxtToModal(moveToList, selectedListId, selectedCardId, textArea);
 
   }
 
@@ -652,7 +640,6 @@
     const closeBtns = modal.querySelectorAll('.close-modal');
     const saveBtn = modal.querySelector('.save-changes');
     const deleteBtn = modal.querySelector('.delete-card');
-    console.info(saveBtn);
 
     closeBtns.forEach((btn) => {
       btn.addEventListener("click", toggleModal);
@@ -673,7 +660,7 @@
     cardTxt.textContent = textArea.value;
 
     //save change in AppData
-    MODEL.saveModalDiscription(selectedListId, selectedCardId, cardTxt);
+    MODEL.saveModalDescription(selectedListId, selectedCardId, cardTxt);
 
   }
 
@@ -852,7 +839,7 @@
           if (member.id === memberId) {
             let memberName = member.name
             userOnTask.setAttribute('title', `${memberName}`);
-            userOnTask.innerHTML = getInishials(memberName);
+            userOnTask.innerHTML = getInitials(memberName);
           }
         });
 
@@ -921,6 +908,7 @@
   }
 
   function DeleteMember(event) {
+
     const target = event.target;
     const membersList = document.querySelector('.members-list');
     const currentMemberLi = target.closest('.list-group-item');
@@ -985,16 +973,15 @@
     const btnContainer = createElement('div', ['btn-container'], memberInPlace);
     btnContainer.innerHTML = ` 
           <button class="edit-member btn btn-info btn-xs">Edit</button>
-          <button class="delete-member btn btn-danger btn-xs">Delete</button>
-`
+          <button class="delete-member btn btn-danger btn-xs">Delete</button>`
     const deleltMemberBtn = btnContainer.querySelector('.delete-member');
     const editMemberBtn = btnContainer.querySelector('.edit-member');
 
     const EditMemberBtnContainer = createElement('div', ['edit-member-btn-container'], memberInPlace);
     EditMemberBtnContainer.innerHTML = `
           <button class="cancel-member-btn btn btn-default btn-xs">Cancel</button>
-          <button class="save-member-btn btn btn-success btn-xs">save</button>
-`
+          <button class="save-member-btn btn btn-success btn-xs">save</button>`
+
     deleltMemberBtn.addEventListener("click", DeleteMember);
     editMemberBtn.addEventListener("click", changeMember);
 
@@ -1045,6 +1032,7 @@
       return true;
     }
     else {
+
       return false
     }
   }
@@ -1056,6 +1044,7 @@
     oReq.open("GET", "assets/board.json");
     oReq.send();
   }
+
   function getMemberData() {
     const memberReq = new XMLHttpRequest();
 
@@ -1065,7 +1054,7 @@
 
   }
 
-  //change the selcted li in nav bar by hash
+  //change the selected li in nav bar by hash
   function selectedNavLink(page) {
 
     const navbar = document.querySelector('.navbar-nav');
@@ -1083,7 +1072,7 @@
   }
 
 
-  // JSON event listiner
+  // JSON event listener
   function reqListenerData(event) {
 
     const target = event.target;
@@ -1140,7 +1129,7 @@
       selectedNavLink('board');
 
       addModalEvents();
-      addListEventListiner();
+      addListEventListener();
     }
   }
 
@@ -1149,21 +1138,20 @@
 
     window.addEventListener('hashchange', handelPages);
 
-    //let LocalAppData = JSON.parse(localStorage.getItem('appData'));
-    let LocalAppData = undefined;
+    let LocalAppData = JSON.parse(localStorage.getItem('appData'));
+    // let LocalAppData = undefined;
 
     if (LocalAppData) {
-      console.info('yes local data', LocalAppData);
       MODEL.appDataIsLocalData(LocalAppData);
       handelPages();
     }
 
     else {
-      console.info('no local data');
       getBoardData();
       getMemberData();
     }
   }
 
   onArrival();
+
 })();

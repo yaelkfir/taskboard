@@ -497,11 +497,10 @@ bottom :-20px;
   width: 380px;
 }
 
-.panel-before-transition{
-
-  transition: all 0.2s ease-out;
-  width:250px;
-  opacity: 1;
+.new-panel{
+  width:0px;
+  opacity: 0;
+height: 130px;
 }
 
 /*

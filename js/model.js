@@ -17,15 +17,16 @@ const MODEL = (function () {
     appData.members.splice(index, 1);
 
     removeMemberFromAppDataCards(memberDataId);
-//LOCAL STORAGE
+
+    //LOCAL STORAGE
+
     localStorage.setItem('appData', JSON.stringify(appData));
 
   }
 
   function removeMemberFromAppDataCards(memberDataId) {
     let toRemoveMember = '';
-    // memberDataId = id
-    //find the tasks that have this id in its members
+
     appData.lists.forEach((list) => {
 
       list.tasks.forEach((task) => {
@@ -111,11 +112,11 @@ const MODEL = (function () {
 
 
 //cards
-  function addCardToListInAppData(cardId, cardDiscription, parentSectionId) {
+  function addCardToListInAppData(cardId, cardDescription, parentSectionId) {
 
     let tempCard = {
       id: `${cardId}`,
-      text: `${cardDiscription.textContent }`,
+      text: `${cardDescription.textContent }`,
       members: []
     };
 
@@ -131,7 +132,7 @@ const MODEL = (function () {
 
 
 //modal
-  function saveModalDiscription(selectedListId, selectedCardId, cardTxt) {
+  function saveModalDescription(selectedListId, selectedCardId, cardTxt) {
 
     //get the card from app data
     let selectedCardData = getCardDataById(selectedListId, selectedCardId);
@@ -196,10 +197,12 @@ const MODEL = (function () {
 
 
 //drag and drop
-  function updateTaskOrder(dragedToListId, targetTaskId, draggedCardId) {
+ //MODEL.updateTaskOrder(dragedToListId, dragedToList, targetTaskId, draggedCardId);
 
+  function updateTaskOrder(draggedToListId ,targetTaskId, draggedCardId) {
 
-    const listInAppData = findListInAppData(dragedToListId);
+    console.info('model targetTaskId',targetTaskId);
+    const listInAppData = findListInAppData(draggedToListId);
 
     //get index of e.target card
 
@@ -250,13 +253,17 @@ const MODEL = (function () {
       return list.id === selectedListId
     });
 
+
   }
 
   function findCardByListInAppData(selectedListData, selectedCardId) {
+
     return selectedListData.tasks.find((task) => {
 
       return task.id === selectedCardId;
+
     });
+
   }
 
 
@@ -295,7 +302,7 @@ const MODEL = (function () {
 
 
     //modal
-    saveModalDiscription: saveModalDiscription,
+    saveModalDescription: saveModalDescription,
 
     saveModalMembers: saveModalMembers,
 
@@ -324,6 +331,7 @@ const MODEL = (function () {
     findCardByListInAppData: findCardByListInAppData,
 
     saveToLocalStorage: saveToLocalStorage
+
   }
 
 })();
